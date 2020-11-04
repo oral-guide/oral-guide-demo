@@ -8,6 +8,7 @@
 </template>
 
 <script>
+// import { mapState } from "vuex";
 export default {
   data() {
     return {
@@ -15,19 +16,20 @@ export default {
         { name: "谁是卧底" },
         { name: "XXX" },
         { name: "好玩的游戏" },
-        { name: "PK学习" }
-      ]
+        { name: "PK学习" },
+      ],
     };
   },
   onLoad() {},
   methods: {
     navigate() {
       console.log(111);
-      uni.navigateTo({ url: "../hall/index",
+      uni.navigateTo({
+        url: "../hall/index",
         success: (res) => console.log(res),
         fail: (res) => console.log(res),
       });
-    }
+    },
   },
 };
 </script>
