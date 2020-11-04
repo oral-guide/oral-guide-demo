@@ -1,6 +1,6 @@
 <template>
 	<view>
-		This is a friend page.
+		This is a friend page. hhh
 	</view>
 </template>
 
