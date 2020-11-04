@@ -2,11 +2,14 @@
 	import { mapMutations } from "vuex";
 	export default {
 		methods: {
-			...mapMutations(["setWs"]),
+			...mapMutations(["setWs", "setUsername"]),
 		},
-		onLaunch: function() {
+		onLaunch: async function() {
 			console.log('App Launch');
-			this.setWs(new WebSocket("ws://localhost:8080"));
+			this.$util.openWebsocket();
+			let name = await this.$util.getRandomNickname();
+			this.setUsername(name);
+			
 		},
 		onShow: function() {
 			console.log('App Show')

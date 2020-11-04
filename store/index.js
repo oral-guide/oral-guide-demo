@@ -1,14 +1,22 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 Vue.use(Vuex);
+
+
+
 const store = new Vuex.Store({
     state: {
         ws: null,
-        msg: "hhh"
+        user: {
+            name: ""
+        }
     },
     mutations: {
         setWs(state, ws) {
             state.ws = ws;
+        },
+        setUsername(state, name) {
+            state.user.name = name;
         }
     },
     actions: {
