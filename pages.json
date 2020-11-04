@@ -3,22 +3,37 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": "首页"
 			}
-		}, {
-			"path": "pages/friend/friend",
+		},
+		{
+			"path": "pages/friend/index",
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
 			}
 
-		}, {
-			"path": "pages/user/user",
+		},
+		{
+			"path": "pages/user/index",
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
 			}
-
+		},
+		{
+			"path": "pages/hall/index",
+			"style": {
+				"navigationBarTitleText": "大厅",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/room/index",
+			"style": {
+				"navigationBarTitleText": "房间",
+				"enablePullDownRefresh": false
+			}
 		}
 	],
 	"globalStyle": {
@@ -32,24 +47,30 @@
 		}
 	},
 	"tabBar": {
-		"list": [{
-				"pagePath": "pages/friend/friend",
-				"text": "社交",
-				"iconPath": "static/icon/friend.png"
+		"color": "#303030",
+		"selectedColor": "#ff6600",
+		"backgroundColor": "#f8f8f8",
+		"list": [
+			{
+				"pagePath": "pages/index/index",
+				"text": "首页",
+				"iconPath": "static/icon/speak.png",
+				"selectedIconPath": "static/icon/speak-hl.png"
 			},
 			{
-				"pagePath": "pages/user/user",
+				"pagePath": "pages/friend/index",
+				"text": "社交",
+				"iconPath": "static/icon/friend.png",
+				"selectedIconPath": "static/icon/friend-hl.png"
+			},
+			{
+				"pagePath": "pages/user/index",
 				"text": "我",
-				"iconPath": "static/icon/user.png"
+				"iconPath": "static/icon/user.png",
+				"selectedIconPath": "static/icon/user-hl.png"
 			}
-		],
-		"midButton": {
-			"width": "80px",
-			"height": "50px",
-			"text": "主页",
-			"iconPath": "static/icon/speak.png",
-			"iconWidth": "24px"
-		}
+		]
+		
 	},
 	"condition": { //模式配置，仅开发期间生效
 		"current": 0, //当前激活的模式(list 的索引项)
