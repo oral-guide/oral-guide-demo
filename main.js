@@ -5,8 +5,11 @@ import util from './utils/main';
 Vue.config.productionTip = false;
 
 import Dialog from './wxcomponents/vant/dialog/dialog';
-
 Vue.use(Dialog);
+
+import userCard from './components/UserCard';
+Vue.component("userCard",userCard)
+
 
 Vue.prototype.$util = util;
 
