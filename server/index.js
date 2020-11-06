@@ -36,17 +36,13 @@ const wss = new WebSocket.Server({
 const userMap = {};
 let rooms = [];
 wss.on("connection", ws => {
-    // 发送当前聊天列表
-    console.log("新用户来啦！");
-
     ws.on("message", msg => {
         // 消息分发处理中心
         msg = JSON.parse(msg);
-        console.log(msg);
         actionMap[msg.type](msg, ws);
     })
     ws.on("close", () => {
-        if (userMap[ws.user.name].user.room) {
+        if (userMap[ws.user.name].user.roomId) {
             // 还在房间里，退出房间
             forceLeaveRoom(ws)
         }
@@ -76,7 +72,6 @@ function updateRooms(isBroadcast, target) {
     } else {
         notify(target, reply);
     }
-    console.log(rooms);
 }
 
 function connect(msg, ws) {
@@ -109,6 +104,7 @@ function createRoom(msg) {
     }
     rooms.push(room);
     updateRooms(true);
+    console.log(`房间“${room.name}”被创建了。`);
 }
 
 function enterRoom(msg) {
@@ -124,9 +120,11 @@ function enterRoom(msg) {
     room.users.push(user);
 
     // 更新用户的room状态
-    userMap[user.name].user.room = roomId;
+    userMap[user.name].user.roomId = roomId;
 
     updateRooms(true);
+
+    console.log(`${user.name}进入了房间“${room.name}”。目前房间内人数为${room.users.length}/${room.seats}`);
 }
 
 function leaveRoom(msg) {
@@ -142,26 +140,27 @@ function leaveRoom(msg) {
 }
 
 function forceLeaveRoom(ws) {
-    let {
-        room
-    } = ws.user;
+    let roomId = ws.user.roomId;
     let user = ws.user;
-    leaveHelper(room, user);
+    leaveHelper(roomId, user);
 
 }
 
 function leaveHelper(roomId, user) {
     let room = rooms.find(room => room.roomId === roomId);
+    if (!room) return;
     if (room.users.length === 1) {
         // 最后一个人离开当前房间，即销毁此房间
+        console.log(`房间“${room.name}”没人了，被销毁了。`);
         rooms.splice(rooms.indexOf(room), 1);
     } else {
         // 用户离开房间
         room.users.splice(room.users.findIndex(u => u.name === user.name), 1);
     }
     // 更新用户的room状态
-    userMap[user.name].user.room = roomId;
+    userMap[user.name].user.roomId = roomId;
     updateRooms(true);
+    console.log(`${user.name}离开了房间“${room.name}”。`);
 }
 
 function notify(ws, reply) {

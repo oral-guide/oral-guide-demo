@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 export default {
   data() {
     return {
@@ -39,10 +39,14 @@ export default {
     };
   },
   computed: {
-      ...mapState(["user"])
+    ...mapState(["user"]),
   },
   methods: {
+    ...mapMutations(["setUserRole", "setUserRoom", "setUserPower"]),
     async createRoom() {
+      this.setUserRole(true);
+      this.setUserRoom(this.form.roomId);
+      this.setUserPower(false);
       await this.$util.sendSocketMsg({
         type: "createRoom",
         data: {
@@ -51,11 +55,11 @@ export default {
         },
       });
       await this.$util.sendSocketMsg({
-          type: "enterRoom",
-          data: {
-              roomId: this.form.roomId,
-              user: this.user,
-          }
+        type: "enterRoom",
+        data: {
+          roomId: this.form.roomId,
+          user: this.user,
+        },
       });
       this.form = {
         name: "快来一起愉快练习口语吧~",
@@ -63,6 +67,9 @@ export default {
         seats: 8,
       };
       uni.navigateBack();
+      uni.navigateTo({
+          url: "../room/index",
+      })
     },
   },
 };
