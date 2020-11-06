@@ -20,7 +20,6 @@
 		},
 		onShow() {
 			console.log("test");
-			this.$util.sendSocketMsg({name: this.user.name, msg: "hello"});
 		}
 	}
 </script>

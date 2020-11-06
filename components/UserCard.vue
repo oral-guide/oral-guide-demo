@@ -1,7 +1,10 @@
 <template>
     <div class="usercard">
         <van-row type="flex" justify="space-around">
-            <van-image round width="4rem" height="4rem" src="/static/userimg.jpg"/>
+            <div>
+                <van-image round width="4rem" height="4rem" src="/static/userimg.jpg"/>
+            </div>
+            
         </van-row>
 
     </div>

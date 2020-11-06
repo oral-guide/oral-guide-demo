@@ -6,10 +6,17 @@
 		},
 		onLaunch: async function() {
 			console.log('App Launch');
-			this.$util.openWebsocket();
 			let name = await this.$util.getRandomNickname();
 			this.setUsername(name);
+			this.$util.openWebsocket();
 			
+			// 获取录音权限
+			uni.authorize({
+			    scope: 'scope.record',
+			    success() {
+			        console.log('已获取录音权限！');
+			    }
+			})
 		},
 		onShow: function() {
 			console.log('App Show')

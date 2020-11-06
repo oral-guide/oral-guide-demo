@@ -1,15 +1,11 @@
 <template>
   <div>
-    <!-- <user-card></user-card> -->
+      这里放入各种组件
   </div>
 </template>
 
 <script>
-    // import userCard from "../../components/UserCard"
     export default {
-        // components:{
-        //     userCard
-        // }
     }
 </script>
 
