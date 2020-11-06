@@ -1,22 +1,20 @@
 <template>
 <div>
-  <userCard>
+<userCard>
 </useRCard>
 </div>
 </template>
 
 <script>
-// import userCard from "../../components/UserCard"
-export default {
-  data() {
-    return {
-
-    };
-  }
-};
+import { mapState, mapGetter } from "vuex";
+    export default {
+        computed: {
+            ...mapState(["players"]),
+            ...mapGetter(["player"])
+        },
+    }
 </script>
 
-<style  scoped>
-
+<style scoped>
 
 </style>
