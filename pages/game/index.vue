@@ -6,11 +6,11 @@
 </template>
 
 <script>
-import { mapState, mapGetter } from "vuex";
+import { mapState, mapGetters } from "vuex";
     export default {
         computed: {
             ...mapState(["players"]),
-            ...mapGetter(["player"])
+            ...mapGetters(["player"])
         },
     }
 </script>

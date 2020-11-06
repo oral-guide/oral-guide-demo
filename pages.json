@@ -1,6 +1,13 @@
 {
 	"pages": [
 		{
+			"path": "pages/game/index",
+			"style": {
+				"navigationBarTitleText": "游戏",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "首页"
@@ -33,14 +40,8 @@
 				"navigationBarTitleText": "房间",
 				"enablePullDownRefresh": false
 			}
-		},
-		{
-			"path": "pages/game/index",
-			"style": {
-				"navigationBarTitleText": "游戏",
-				"enablePullDownRefresh": false
-			}
 		}
+	
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

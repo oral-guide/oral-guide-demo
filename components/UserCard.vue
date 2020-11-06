@@ -1,9 +1,9 @@
 <template>
   <div class="usercard">
-    <van-row class="container" gutter="4" type="flex" justify="space-around">
+    <van-row class="container" gutter="3" type="flex" justify="space-around">
       <van-col v-for="(item,index) in users" :key="index">
         <div class="user" :class="{isdead:!item.isAlive,isSpeaking:item.isSpeaking}" >
-          <van-image round width="3rem" height="3rem" src="/static/userimg.jpg" />
+          <van-image round width="2rem" height="2rem" src="/static/userimg.jpg" />
           <div class="number">{{item.id}}</div>
           <div class="username">{{item.name}}</div>
         </div>
@@ -96,7 +96,7 @@ export default {
 
 .user {
   position: relative;
-  font-size: .8rem;
+  font-size: .5rem;
 }
 
 .username {
@@ -106,8 +106,8 @@ export default {
 .number {
   background-color: #ff6600;
   text-align: center;
-  height: 1.1rem;
-  width: 1.1rem;
+  height: .8rem;
+  width: .8rem;
   position: absolute;
   left: 0;
   top: 0;
