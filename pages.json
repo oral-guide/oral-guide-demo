@@ -36,13 +36,6 @@
 			}
 		},
 		{
-			"path": "pages/addRoom/index",
-			"style": {
-				"navigationBarTitleText": "新建房间",
-				"enablePullDownRefresh": false
-			}
-		},
-		{
 			"path": "pages/game/index",
 			"style": {
 				"navigationBarTitleText": "游戏",
@@ -60,6 +53,8 @@
 			"van-picker": "/wxcomponents/vant/picker/index",
 			"van-dialog": "/wxcomponents/vant/dialog/index",
 			"van-field": "/wxcomponents/vant/field/index",
+			"van-icon": "/wxcomponents/vant/icon/index",
+			"van-toast": "/wxcomponents/vant/toast/index",
 			"van-stepper": "/wxcomponents/vant/stepper/index"
 		}
 	},

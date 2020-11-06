@@ -5,6 +5,10 @@ import store from "../../store/index";
 function update(reply) {
     store.state[reply.key] = reply.data[reply.key];
 }
+function initializeGame(reply) {
+    store.state.players = reply.data.players;
+    store.state.words = reply.data.words;
+}
 export default {
     update,
 }

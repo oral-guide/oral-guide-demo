@@ -10,12 +10,21 @@ const store = new Vuex.Store({
             name: "",
             roomId: 0,
             isOwner: false,
-            canLeave: true
         },
         rooms: [],
         // 游戏逻辑，得房间里面开始游戏后才用到
         gameSpy: null,
-        role: null
+        words: [],
+        players: []
+    },
+    getters: {
+        player: state => {
+            return state.players.find(player => player.name === state.user.name);
+        },
+        word: (state, getters) => {
+            if (!getters.player || !state.words.length) return null;
+            return getters.player.isSpy ? state.words[1] : state.words[0];
+        }
     },
     mutations: {
         setUsername(state, name) {
@@ -26,9 +35,6 @@ const store = new Vuex.Store({
         },
         setUserRole(state, role) {
             state.user.isOwner = role;
-        },
-        setUserPower(state, power) {
-            state.user.canLeave = power;
         },
         setRooms(state, rooms) {
             state.rooms = rooms;

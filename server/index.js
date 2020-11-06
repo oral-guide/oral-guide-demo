@@ -59,6 +59,8 @@ let actionMap = {
     leaveRoom,
 }
 
+// 更新相关
+
 function updateRooms(isBroadcast, target) {
     let reply = {
         type: "update",
@@ -74,11 +76,14 @@ function updateRooms(isBroadcast, target) {
     }
 }
 
+// 用户上线
 function connect(msg, ws) {
     ws.user = msg.data.user;
     userMap[msg.data.user.name] = ws;
     updateRooms(false, ws);
 }
+
+// 房间相关逻辑
 
 function createRoom(msg) {
     // msg = {
@@ -118,6 +123,11 @@ function enterRoom(msg) {
     } = msg.data;
     let room = rooms.find(room => room.roomId === roomId);
     room.users.push(user);
+
+    if (room.users.length === room.seats) {
+        // 人满了发车
+        startSpyGame(room)
+    }
 
     // 更新用户的room状态
     userMap[user.name].user.roomId = roomId;
@@ -163,13 +173,36 @@ function leaveHelper(roomId, user) {
     console.log(`${user.name}离开了房间“${room.name}”。`);
 }
 
+// 游戏相关
+function startSpyGame(room) {
+    // players是对原先users数组的每个对象扩充了isAlive, isSpy等属性的数组
+    let players = room.users
+        .shuffle() // 打乱顺序
+        .map(user => { // 增加游戏所需属性
+            return {
+                ...user,
+                isAlive: true,
+                isSpeaking: false,
+                isSpy: false
+            }
+        })
+    players.setSpy(); // 设置卧底（4-6一个，7-8两个）
+    roomBroadcast(room, {
+        type: "initializeGame",
+        data: {
+            words: null, // TODO @心瑶：在这里注入数据
+            players,
+        }
+    })
+}
+
 function notify(ws, reply) {
     ws.send(JSON.stringify(reply));
 }
 
-function roomBroadcast(target, reply) {
-    target.forEach(id => {
-        userMap[id].send(JSON.stringify(reply));
+function roomBroadcast(room, reply) {
+    room.users.forEach(user => {
+        userMap[user.name].send(JSON.stringify(reply));
     })
 }
 
@@ -178,4 +211,36 @@ function broadcast(reply) {
         const ws = userMap[key];
         ws.send(JSON.stringify(reply));
     })
+}
+
+
+
+
+
+
+// helper functions
+Array.prototype.shuffle = function () {
+    let arr = this.slice();
+    let m = arr.length,
+        t, i;
+    while (m) {
+        i = Math.floor(Math.random() * m--);
+        t = arr[m];
+        arr[m] = arr[i];
+        arr[i] = t;
+    }
+    return arr;
+}
+
+Array.prototype.setSpy = function () {
+    let arr = this;
+    let index = Math.floor(arr.length * Math.random());
+    arr[index].isSpy = true;
+    if (arr.length > 6) {
+        let anotherIndex = Math.floor(arr.length * Math.random());
+        while (anotherIndex === index) {
+            anotherIndex = Math.floor(arr.length * Math.random());
+        }
+        arr[anotherIndex].isSpy = true;
+    }
 }

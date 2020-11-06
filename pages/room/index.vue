@@ -5,7 +5,7 @@
           <div class="seats">{{ curRoom.users.length }} / {{ curRoom.seats }}</div>
           <div class="msg">人满了自动开始</div>
       </div>
-      <div class="player" v-for="i in 8" :key="i">
+      <div class="player" v-for="i in curRoom.seats" :key="i">
         {{ curRoom.users[i].name || "+" }}
       </div>
     </div>

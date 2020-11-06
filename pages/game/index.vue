@@ -5,11 +5,15 @@
 </template>
 
 <script>
+import { mapState, mapGetter } from "vuex";
     export default {
-        
+        computed: {
+            ...mapState(["players"]),
+            ...mapGetter(["player"])
+        },
     }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 
 </style>
