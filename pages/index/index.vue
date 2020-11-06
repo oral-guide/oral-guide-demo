@@ -13,7 +13,7 @@
 <script>
 // import { mapState } from "vuex";
 const recorderManager = uni.getRecorderManager();
-// const audio = uni.createInnerAudioContext();
+const audio = uni.createInnerAudioContext();
 export default {
   data() {
     return {

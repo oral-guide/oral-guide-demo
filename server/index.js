@@ -23,7 +23,7 @@ app.post('/upload/audio', uploadAudio.single("myFile"), function (req, res) {
         status: 200,
         msg: "success",
         data: {
-            'url': 'http://localhost:8080/uploads/music/' + req.file.filename
+            'url': 'http://localhost:8000/uploads/music/' + req.file.filename
         }
     })
 })
@@ -183,7 +183,8 @@ function startSpyGame(room) {
                 ...user,
                 isAlive: true,
                 isSpeaking: false,
-                isSpy: false
+                isSpy: false,
+                records: []
             }
         })
     players.setSpy(); // 设置卧底（4-6一个，7-8两个）
