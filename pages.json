@@ -1,6 +1,13 @@
 {
 	"pages": [
 		{
+			"path": "pages/game/index",
+			"style": {
+				"navigationBarTitleText": "游戏",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "首页"
@@ -41,13 +48,6 @@
 				"navigationBarTitleText": "新建房间",
 				"enablePullDownRefresh": false
 			}
-		},
-		{
-			"path": "pages/game/index",
-			"style": {
-				"navigationBarTitleText": "游戏",
-				"enablePullDownRefresh": false
-			}
 		}
 	],
 	"globalStyle": {
@@ -60,7 +60,8 @@
 			"van-picker": "/wxcomponents/vant/picker/index",
 			"van-dialog": "/wxcomponents/vant/dialog/index",
 			"van-field": "/wxcomponents/vant/field/index",
-			"van-stepper": "/wxcomponents/vant/stepper/index"
+			"van-stepper": "/wxcomponents/vant/stepper/index",
+			"van-notice-bar": "/wxcomponents/vant/notice-bar/index"
 		}
 	},
 	"tabBar": {
