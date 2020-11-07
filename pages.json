@@ -19,7 +19,6 @@
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
 			}
-
 		},
 		{
 			"path": "pages/user/index",
@@ -41,6 +40,7 @@
 				"navigationBarTitleText": "房间",
 				"enablePullDownRefresh": false
 			}
+<<<<<<< HEAD
 		},
 		{
 			"path": "pages/addRoom/index",
@@ -48,6 +48,8 @@
 				"navigationBarTitleText": "新建房间",
 				"enablePullDownRefresh": false
 			}
+=======
+>>>>>>> 02f1181a1da9394beb2cb00e4c82ddbb017b906b
 		}
 	],
 	"globalStyle": {
@@ -58,10 +60,19 @@
 		"usingComponents": {
 			"van-button": "/wxcomponents/vant/button/index",
 			"van-picker": "/wxcomponents/vant/picker/index",
+			"van-image": "/wxcomponents/vant/image/index",
+			"van-row": "/wxcomponents/vant/row/index",
+			"van-col": "/wxcomponents/vant/col/index",
 			"van-dialog": "/wxcomponents/vant/dialog/index",
 			"van-field": "/wxcomponents/vant/field/index",
+<<<<<<< HEAD
 			"van-stepper": "/wxcomponents/vant/stepper/index",
 			"van-notice-bar": "/wxcomponents/vant/notice-bar/index"
+=======
+			"van-icon": "/wxcomponents/vant/icon/index",
+			"van-toast": "/wxcomponents/vant/toast/index",
+			"van-stepper": "/wxcomponents/vant/stepper/index"
+>>>>>>> 02f1181a1da9394beb2cb00e4c82ddbb017b906b
 		}
 	},
 	"tabBar": {
@@ -88,14 +99,15 @@
 				"selectedIconPath": "static/icon/user-hl.png"
 			}
 		]
-		
 	},
 	"condition": {
 		"current": 0,
-		"list": [{
-			"name": "",
-			"path": "",
-			"query": ""
-		}]
+		"list": [
+			{
+				"name": "",
+				"path": "",
+				"query": ""
+			}
+		]
 	}
 }
