@@ -1,6 +1,7 @@
 import store from "../../store/index";
 import actionMap from "./actionMap";
 
+// 开启websocket
 function openWebsocket() {
     uni.connectSocket({
         url: 'ws://localhost:8080'
@@ -15,8 +16,8 @@ function openWebsocket() {
     });
     // websocket收到消息逻辑处理
     uni.onSocketMessage((res) => {
+        console.log(res.data);
         let reply = JSON.parse(res.data);
-        console.log(reply);
         actionMap[reply.type](reply);
     });
     uni.onSocketError((res) => {
@@ -29,12 +30,81 @@ function openWebsocket() {
     });
 }
 
+// 发送websocket消息
 async function sendSocketMsg(msg) {
     return uni.sendSocketMessage({
         data: JSON.stringify(msg)
     })
 }
 
+// 更新游戏房间内msgs
+async function sendDiscussionMsg(msg) {
+    // msg = { // 传进来的msg应长这样：
+    //     from: "小明", // 值为username, 即发消息方。后期可考虑增加to属性，即私聊时收消息方
+    //     content: "xxx", // 消息内容
+    // }
+    msg = {
+        ...msg,
+        time: new Date().getTime(),
+    }
+    let msgs = store.getters.currentRoom.msgs.concat(msg);
+    let roomId = store.getters.currentRoom.roomId;
+    return sendSocketMsg({
+        type: "updateRoom",
+        roomId,
+        key: "msgs",
+        data: {
+            msgs
+        }
+    });
+}
+
+// 上传录音
+async function uploadAudio(filePath) {
+    const option = {
+        url: "http://localhost:8000/upload/audio",
+        filePath,
+        formData: {
+            filePath,
+        },
+        name: "myFile",
+    };
+    uni.showLoading({
+        title: "录音上传中...",
+    });
+    let res = await uni.uploadFile(option);
+    uni.hideLoading();
+    return res;
+}
+
+// 更新游戏中玩家信息
+async function updatePlayerInfo(msg) {
+    let roomId = store.getters.currentRoom.roomId;
+    return sendSocketMsg({
+        type: "updateGameInfo",
+        key: "players",
+        roomId,
+        data: {
+            ...msg,
+        }
+    })
+}
+// 更新游戏信息，如game.finishRecord，key即为finishRecord，data即为true或者false
+async function updateGameInfo(key, data) {
+    let roomId = store.getters.currentRoom.roomId;
+    return sendSocketMsg({
+        type: "updateGameInfo",
+        key,
+        roomId,
+        data: {
+            [key]: data,
+        }
+    })
+}
+
+
+
+// 测试用的用户名称获取
 async function getRandomNickname() {
     return "小明";
     // return (await uni.request({
@@ -45,5 +115,9 @@ async function getRandomNickname() {
 export default {
     openWebsocket,
     sendSocketMsg,
+    sendDiscussionMsg,
+    uploadAudio,
+    updatePlayerInfo,
+    updateGameInfo,
     getRandomNickname
 }

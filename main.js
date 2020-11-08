@@ -11,7 +11,7 @@ Vue.use(Dialog);
 // Vue.use(Toast);
 
 import userCard from './components/UserCard';
-Vue.component("userCard",userCard)
+Vue.component("userCard", userCard)
 
 
 Vue.prototype.$util = util;
