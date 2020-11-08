@@ -84,8 +84,7 @@ let rooms = [{
     type: "spy",
     isPlaying: true,
     game: {
-        players: [
-            {
+        players: [{
                 name: "小明",
                 roomId: 0,
                 isOwner: true,
@@ -329,16 +328,18 @@ function updateGameInfo(msg) {
         let player = players.find(player => player.name === msg.data.playerName);
         player[msg.data.subKey] = msg.data.data[msg.data.subKey];
 
-        // 更新录音状态
-        room.game.recordsCount ++;
-        let activePlayers = room.game.players.filter(player => player.isAlive);
-        console.log(room.game.recordsCount);
-        console.log(activePlayers.length);
-        if (room.game.recordsCount === activePlayers.length) {
-            // 开启闸门，通知全部录音准备完成！
-            room.game.finishRecord = true;
-            room.game.recordsCount = 0;
-            updateRooms(1, room);
+        if (msg.data.subKey === "records") {
+            // 更新录音状态
+            room.game.recordsCount++;
+            let activePlayers = room.game.players.filter(player => player.isAlive);
+            console.log(room.game.recordsCount);
+            console.log(activePlayers.length);
+            if (room.game.recordsCount === activePlayers.length) {
+                // 开启闸门，通知全部录音准备完成！
+                room.game.finishRecord = true;
+                room.game.recordsCount = 0;
+                updateRooms(1, room);
+            }
         }
 
     } else {
@@ -366,12 +367,16 @@ function startSpyGame(room) {
     roomBroadcast(room, {
         type: "update",
         key: "players",
-        data: { players }
+        data: {
+            players
+        }
     });
     roomBroadcast(room, {
         type: "update",
         key: "words",
-        data: { words }
+        data: {
+            words
+        }
     });
     roomBroadcast(room, {
         type: "initializeGame"
