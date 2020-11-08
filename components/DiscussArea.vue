@@ -4,7 +4,7 @@
       show="{{ show }}"
       round
       position="bottom"
-      custom-style="height: 20%"
+      custom-style="height: 50%"
       bind:close="onClose"
     />
   </div>

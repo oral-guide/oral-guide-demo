@@ -11,6 +11,9 @@ Vue.use(Dialog);
 import UserCard from './components/UserCard';
 Vue.component("UserCard",UserCard)
 
+import DisArea from './components/DiscussArea'
+Vue.component("DisArea",DisArea)
+
 
 Vue.prototype.$util = util;
 
