@@ -40,6 +40,13 @@
 				"navigationBarTitleText": "房间",
 				"enablePullDownRefresh": false
 			}
+		},
+		{
+			"path": "pages/addRoom/index",
+			"style": {
+				"navigationBarTitleText": "新建房间",
+				"enablePullDownRefresh": false
+			}
 		}
 	
 	],
@@ -56,9 +63,10 @@
 			"van-col": "/wxcomponents/vant/col/index",
 			"van-dialog": "/wxcomponents/vant/dialog/index",
 			"van-field": "/wxcomponents/vant/field/index",
+			"van-stepper": "/wxcomponents/vant/stepper/index",
+			"van-notice-bar": "/wxcomponents/vant/notice-bar/index",
 			"van-icon": "/wxcomponents/vant/icon/index",
-			"van-toast": "/wxcomponents/vant/toast/index",
-			"van-stepper": "/wxcomponents/vant/stepper/index"
+			"van-toast": "/wxcomponents/vant/toast/index"
 		}
 	},
 	"tabBar": {
