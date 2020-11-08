@@ -34,7 +34,135 @@ const wss = new WebSocket.Server({
 });
 
 const userMap = {};
-let rooms = [];
+let rooms = [{
+    roomId: 0,
+    name: "大佬房",
+    pswd: "",
+    seats: 8,
+    users: [{
+            name: "小明",
+            roomId: 0,
+            isOwner: true
+        },
+        {
+            name: "银角大王",
+            roomId: 0,
+            isOwner: false
+        },
+        {
+            name: "山拉拉卡",
+            roomId: 0,
+            isOwner: false
+        },
+        {
+            name: "雷伊",
+            roomId: 0,
+            isOwner: false
+        },
+        {
+            name: "鱼雨遇",
+            roomId: 0,
+            isOwner: false
+        },
+        {
+            name: "跟着党走",
+            roomId: 0,
+            isOwner: false
+        },
+        {
+            name: "多喝水",
+            roomId: 0,
+            isOwner: false
+        },
+        {
+            name: "小红",
+            roomId: 0,
+            isOwner: false
+        }
+    ],
+    msgs: [],
+    type: "spy",
+    isPlaying: true,
+    game: {
+        players: [
+            {
+                name: "小明",
+                roomId: 0,
+                isOwner: true,
+                records: [],
+                isAlive: true,
+                isSpy: true,
+                isSpeaking: false,
+            },
+            {
+                name: "银角大王",
+                roomId: 0,
+                isOwner: false,
+                records: [],
+                isAlive: true,
+                isSpy: false,
+                isSpeaking: false,
+            },
+            {
+                name: "山拉拉卡",
+                roomId: 0,
+                isOwner: false,
+                records: [],
+                isAlive: true,
+                isSpy: false,
+                isSpeaking: false,
+            },
+            {
+                name: "雷伊",
+                roomId: 0,
+                isOwner: false,
+                records: [],
+                isAlive: true,
+                isSpy: true,
+                isSpeaking: false,
+            },
+            {
+                name: "鱼雨遇",
+                roomId: 0,
+                isOwner: false,
+                records: [],
+                isAlive: true,
+                isSpy: false,
+                isSpeaking: false,
+            },
+            {
+                name: "跟着党走",
+                roomId: 0,
+                isOwner: false,
+                records: [],
+                isAlive: true,
+                isSpy: false,
+                isSpeaking: false,
+            },
+            {
+                name: "多喝水",
+                roomId: 0,
+                isOwner: false,
+                records: [],
+                isAlive: true,
+                isSpy: false,
+                isSpeaking: false,
+            },
+            {
+                name: "小红",
+                roomId: 0,
+                isOwner: false,
+                records: [],
+                isAlive: true,
+                isSpy: false,
+                isSpeaking: false,
+            }
+        ],
+        words: [],
+        finishRecord: false,
+        recordsCount: 0
+    }
+}];
 wss.on("connection", ws => {
     ws.on("message", msg => {
         // 消息分发处理中心
@@ -53,15 +181,20 @@ wss.on("connection", ws => {
 
 
 let actionMap = {
+    // 用户上线
     connect,
+    // 房间相关
     createRoom,
     enterRoom,
     leaveRoom,
+    // 消息相关
+    updateRoom,
+    updateGameInfo
 }
 
 // 更新相关
 
-function updateRooms(isBroadcast, target) {
+function updateRooms(broadcastType, target) {
     let reply = {
         type: "update",
         key: "rooms",
@@ -69,10 +202,16 @@ function updateRooms(isBroadcast, target) {
             rooms
         }
     }
-    if (isBroadcast) {
-        broadcast(reply);
-    } else {
-        notify(target, reply);
+    switch (broadcastType) {
+        case 0:
+            notify(target, reply); // 此时target即单个用户websocket实例
+            break;
+        case 1:
+            roomBroadcast(target, reply); // 此时target即对应房间
+            break;
+        case 2:
+            broadcast(reply);
+            break;
     }
 }
 
@@ -80,7 +219,7 @@ function updateRooms(isBroadcast, target) {
 function connect(msg, ws) {
     ws.user = msg.data.user;
     userMap[msg.data.user.name] = ws;
-    updateRooms(false, ws);
+    updateRooms(0, ws);
 }
 
 // 房间相关逻辑
@@ -108,7 +247,7 @@ function createRoom(msg) {
         isPlaying: false
     }
     rooms.push(room);
-    updateRooms(true);
+    updateRooms(2);
     console.log(`房间“${room.name}”被创建了。`);
 }
 
@@ -132,7 +271,7 @@ function enterRoom(msg) {
     // 更新用户的room状态
     userMap[user.name].user.roomId = roomId;
 
-    updateRooms(true);
+    updateRooms(2);
 
     console.log(`${user.name}进入了房间“${room.name}”。目前房间内人数为${room.users.length}/${room.seats}`);
 }
@@ -169,8 +308,42 @@ function leaveHelper(roomId, user) {
     }
     // 更新用户的room状态
     userMap[user.name].user.roomId = roomId;
-    updateRooms(true);
+    updateRooms(2);
     console.log(`${user.name}离开了房间“${room.name}”。`);
+}
+
+// 消息相关
+function updateRoom(msg) {
+    let room = rooms.find(room => room.roomId === msg.roomId);
+    // key可以是msgs等
+    room[msg.key] = msg.data[msg.key];
+    updateRooms(1, room);
+}
+// 更新room.game的相关信息，如player.records录音数据，player.isAlive的情况等
+function updateGameInfo(msg) {
+    let room = rooms.find(room => room.roomId === msg.roomId);
+    // msg.key可以是players等，msg.data.subKey可以是records等
+    if (msg.data.subKey) {
+        // 有subKey，目前唯有players存在
+        let players = room.game[msg.key];
+        let player = players.find(player => player.name === msg.data.playerName);
+        player[msg.data.subKey] = msg.data.data[msg.data.subKey];
+
+        // 更新录音状态
+        room.game.recordsCount ++;
+        let activePlayers = room.game.players.filter(player => player.isAlive);
+        console.log(room.game.recordsCount);
+        console.log(activePlayers.length);
+        if (room.game.recordsCount === activePlayers.length) {
+            // 开启闸门，通知全部录音准备完成！
+            room.game.finishRecord = true;
+            room.game.recordsCount = 0;
+            updateRooms(1, room);
+        }
+
+    } else {
+        room.game[msg.key] = msg.data[msg.key];
+    }
 }
 
 // 游戏相关
@@ -188,12 +361,20 @@ function startSpyGame(room) {
             }
         })
     players.setSpy(); // 设置卧底（4-6一个，7-8两个）
+    room.players = players;
+    room.words = [];
     roomBroadcast(room, {
-        type: "initializeGame",
-        data: {
-            words: null, // TODO @心瑶：在这里注入数据
-            players,
-        }
+        type: "update",
+        key: "players",
+        data: { players }
+    });
+    roomBroadcast(room, {
+        type: "update",
+        key: "words",
+        data: { words }
+    });
+    roomBroadcast(room, {
+        type: "initializeGame"
     })
 }
 
@@ -203,7 +384,9 @@ function notify(ws, reply) {
 
 function roomBroadcast(room, reply) {
     room.users.forEach(user => {
-        userMap[user.name].send(JSON.stringify(reply));
+        if (userMap[user.name]) {
+            userMap[user.name].send(JSON.stringify(reply));
+        }
     })
 }
 

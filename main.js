@@ -9,7 +9,7 @@ import Dialog from './wxcomponents/vant/dialog/dialog.js';
 Vue.use(Dialog);
 
 import UserCard from './components/UserCard';
-Vue.component("userCard",UserCard)
+Vue.component("UserCard",UserCard)
 
 
 Vue.prototype.$util = util;

@@ -13,6 +13,7 @@
         </div>
       </div>
       <div class="vote" v-show="isVote">123546</div>
+      <GameConsole />
       <user-card :users="players"> </user-card>
       <!-- 30s 倒计时 -->
       <van-toast id="timer" />
@@ -39,8 +40,8 @@ export default {
     };
   },
   computed: {
-    ...mapState(["players"]),
-    ...mapGetters(["player", "word"]),
+    // ...mapState([""]),
+    ...mapGetters(["players", "player", "word", "game"]),
   },
   methods: {
     // 开始录音的method，由系统自行调用，并在此设置录音倒计时
@@ -68,24 +69,16 @@ export default {
     },
     // 上传录音的method，可获取到后端传回的url
     async uploadAudio(filePath) {
-      const option = {
-        url: "http://localhost:8000/upload/audio",
-        filePath,
-        formData: {
-          filePath,
-        },
-        name: "myFile",
-      };
-      uni.showLoading({
-        title: "录音上传中...",
-      });
-      let res = await uni.uploadFile(option);
+      let res = await this.$util.uploadAudio(filePath);
       let url = JSON.parse(res[1].data).data.url;
       // 将玩家录音的url推进records数组
       this.player.records.push(url);
-      uni.hideLoading();
-      // 6 此处录音结束并已上传完毕，即第一轮全体录音结束，开始按玩家顺序逐个播放
-      this.startPlaying();
+      // 通过websocket同步自己的录音
+      this.$util.updatePlayerInfo({
+        subKey: "records",
+        playerName: this.player.name,
+        data: { records: this.player.records }
+      });      
     },
     // 7 开始逐个播放
     // TODO 播放到哪个玩家，哪个玩家的头像就变大
@@ -123,10 +116,22 @@ export default {
       if (this.curIndex === -1 || this.curIndex === this.audioSrcList.length) {
         // 9 这一轮结束，讨论环节开始！
         this.round++;
+
+        return;
       }
       audio.src = this.audioSrcList[this.curIndex];
       audio.play();
     },
+  },
+  watch: {
+    game(n) {
+      if (n.finishRecord) {
+        // TODO 全体录音结束
+        this.startPlaying();
+        // finishRecord即收集到了足够录音才开启的闸门，通知全体录音结束，这里即重置闸门
+        this.$util.updateGameInfo("finishRecord", false)
+      }
+    }
   },
   onLoad() {
     recorderManager.onStop((res) => {
