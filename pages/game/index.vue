@@ -155,16 +155,15 @@ export default {
       const timer=setInterval(()=>{
           this.timerCount--;
           console.log(this.timerCount)
-          if(this.timerCount>0){
+          if(this.timerCount>=0){
             toast.setData({
               message:`倒计时${this.timerCount}s`
             })
             }else{
-            clearInterval(countdown);
+            clearInterval(timer);
             Toast.clear();
             this.timerCount=3;
-          }
-         
+          }    
       },1000)   
       // 4 到达30s的时候，开始录音
       if (this.timerCount === 0) {
