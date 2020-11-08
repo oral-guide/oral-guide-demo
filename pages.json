@@ -40,8 +40,7 @@
 				"navigationBarTitleText": "房间",
 				"enablePullDownRefresh": false
 			}
-		}
-	
+		}	
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
