@@ -1,11 +1,14 @@
 <template>
   <div>
-    <userCard> </userCard>
+    <userCard :users="players"> </userCard>
+    <!-- 30s 倒计时 -->
+    <van-toast id="timer"/>
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters } from "vuex";
+import Toast from '../../wxcomponents/vant/toast/toast';
 const recorderManager = uni.getRecorderManager();
 const audio = uni.createInnerAudioContext();
 
@@ -129,7 +132,26 @@ export default {
     // TODO @金萍 展示倒计时
     this.timer = setInterval(() => {
       console.log(`离游戏开始还有${this.timerCount}s`);
-      this.timerCount--;
+      const toast=Toast.loading({
+        duration:0,
+        forbidclick:true,
+        message:'离游戏开始还有3s',
+        selector:"#timer",
+      });
+      const timer=setInterval(()=>{
+          this.timerCount--;
+          console.log(this.timerCount)
+          if(this.timerCount>0){
+            toast.setData({
+              message:`倒计时${this.timerCount}s`
+            })
+            }else{
+            clearInterval(countdown);
+            Toast.clear();
+            this.timerCount=3;
+          }
+         
+      },1000)   
       // 4 到达30s的时候，开始录音
       if (this.timerCount === 0) {
         console.log("游戏开始！");

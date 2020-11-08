@@ -5,8 +5,10 @@ import util from './utils/main';
 Vue.config.productionTip = false;
 
 import Dialog from './wxcomponents/vant/dialog/dialog.js';
+// import Toast from './wxcomponents/vant/toast/toast.js';
 
 Vue.use(Dialog);
+// Vue.use(Toast);
 
 import userCard from './components/UserCard';
 Vue.component("userCard",userCard)
