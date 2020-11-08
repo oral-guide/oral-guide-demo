@@ -14,7 +14,7 @@
       </div>
       <div class="vote" v-show="isVote">123546</div>
       <GameConsole />
-      <user-card :users="players"> </user-card>
+      <UserCard :users="players"></UserCard>
       <!-- 30s 倒计时 -->
       <van-toast id="timer" />
     </div>
