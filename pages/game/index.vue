@@ -1,21 +1,21 @@
 <template>
   <div>
-     <div>
-        <van-notice-bar
-            left-icon="volume-o"
-            text="当前发言的是：玩家1"
-        />
-        <div class="desc">
-            <div class="img">
-                <img src="../../static/library.png" alt="">
-            </div>
-            <div class="word">library</div>
-            <div class="def">A room or set of rooms where books and other literary materials are kept</div>
+    <div>
+      <van-notice-bar left-icon="volume-o" text="当前发言的是：玩家1" />
+      <div class="desc">
+        <div class="img">
+          <img src="../../static/library.png" alt="" />
         </div>
-        <div class="vote" v-show="isVote">123546</div>
-         <userCard :users="players"> </userCard>
-    <!-- 30s 倒计时 -->
-    <van-toast id="timer"/>
+        <div class="word">library</div>
+        <div class="def">
+          A room or set of rooms where books and other literary materials are
+          kept
+        </div>
+      </div>
+      <div class="vote" v-show="isVote">123546</div>
+      <userCard :users="players"> </userCard>
+      <!-- 30s 倒计时 -->
+      <van-toast id="timer" />
     </div>
   </div>
 </template>
@@ -23,7 +23,7 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import Toast from '../../wxcomponents/vant/toast/toast';
+import Toast from "../../wxcomponents/vant/toast/toast";
 const recorderManager = uni.getRecorderManager();
 const audio = uni.createInnerAudioContext();
 
@@ -96,15 +96,15 @@ export default {
         (player) => player.records[player.records.length - 1]
       );
       if (this.round) {
-          // 第二轮及以后每轮都反转
-          this.dir = Number(!this.dir);
+        // 第二轮及以后每轮都反转
+        this.dir = Number(!this.dir);
       }
       if (this.dir === 0) {
-          // 从头到尾
-          this.curIndex = 0;
+        // 从头到尾
+        this.curIndex = 0;
       } else {
-          // 反过来
-          this.curIndex = this.audioSrcList.length - 1;
+        // 反过来
+        this.curIndex = this.audioSrcList.length - 1;
       }
       console.log(this.audioSrcList);
       audio.src = this.audioSrcList[this.curIndex];
@@ -113,20 +113,20 @@ export default {
     },
     // 8 根据方向，顺或反播放下一个玩家的录音
     playNext() {
-        if (this.dir === 0) {
-            // 从头到尾
-            this.curIndex ++;
-        } else {
-            // 反过来
-            this.curIndex --;
-        }
-        if (this.curIndex === -1 || this.curIndex === this.audioSrcList.length) {
-            // 9 这一轮结束，讨论环节开始！
-            this.round ++;
-        }
-        audio.src = this.audioSrcList[this.curIndex];
-        audio.play();
-    }
+      if (this.dir === 0) {
+        // 从头到尾
+        this.curIndex++;
+      } else {
+        // 反过来
+        this.curIndex--;
+      }
+      if (this.curIndex === -1 || this.curIndex === this.audioSrcList.length) {
+        // 9 这一轮结束，讨论环节开始！
+        this.round++;
+      }
+      audio.src = this.audioSrcList[this.curIndex];
+      audio.play();
+    },
   },
   onLoad() {
     recorderManager.onStop((res) => {
@@ -134,9 +134,9 @@ export default {
       this.uploadAudio(res.tempFilePath);
     });
     audio.onEnded((res) => {
-        console.log(111);
-        this.playNext();
-    })
+      console.log(111);
+      this.playNext();
+    });
   },
   onShow() {
     // 1 页面加载完毕，游戏即刻开始
@@ -144,72 +144,62 @@ export default {
     // TODO 2 @心瑶 显示单词相关信息：此时卧底或平民对应的word已经从getters获取到
     // 3 全体30s倒计时
     // TODO @金萍 展示倒计时
+    const toast = Toast.loading({
+      duration: 0,
+      forbidclick: true,
+      message: "离游戏开始还有3s",
+      selector: "#timer",
+    });
     this.timer = setInterval(() => {
       console.log(`离游戏开始还有${this.timerCount}s`);
-      const toast=Toast.loading({
-        duration:0,
-        forbidclick:true,
-        message:'离游戏开始还有3s',
-        selector:"#timer",
+      this.timerCount--;
+      toast.setData({
+        message: `倒计时${this.timerCount}s`,
       });
-      const timer=setInterval(()=>{
-          this.timerCount--;
-          console.log(this.timerCount)
-          if(this.timerCount>0){
-            toast.setData({
-              message:`倒计时${this.timerCount}s`
-            })
-            }else{
-            clearInterval(countdown);
-            Toast.clear();
-            this.timerCount=3;
-          }
-         
-      },1000)   
       // 4 到达30s的时候，开始录音
       if (this.timerCount === 0) {
         console.log("游戏开始！");
         clearInterval(this.timer);
+        Toast.clear();
         // 重置timerCount，为下一次倒计时做准备
         this.timerCount = 3;
-
         // 全体开始录音
         this.startRecord();
 
         // TODO 5 借助dialog或popup等组件，弹窗或其它方式提示用户正在录音中，显示倒计时及提前结束按钮（该按钮调用endRecord，并记得清除startRecord里的timer）
       }
     }, 1000);
-  }
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 .desc {
-    padding-top: 15px;
-    height: 240px;
-    text-align: center;
+  padding-top: 15px;
+  height: 240px;
+  text-align: center;
 
-    .img {
-        height: 150px;
-        margin-bottom: 10px;
+  .img {
+    height: 150px;
+    margin-bottom: 10px;
 
-        img {
-            display: block;
-            margin: 0 auto;
-            width: 150px;
-            height: 150px;
-        }
+    img {
+      display: block;
+      margin: 0 auto;
+      width: 150px;
+      height: 150px;
     }
+  }
 
-    .word {
-        margin-bottom: 5px;
-        font-size: 20px;
-        font-weight: 700;
-    }
+  .word {
+    margin-bottom: 5px;
+    font-size: 20px;
+    font-weight: 700;
+  }
 
-    .def {
-        padding: 0 20px;
-        font-size: 12px;
-    }
+  .def {
+    padding: 0 20px;
+    font-size: 12px;
+  }
 }
 </style>
