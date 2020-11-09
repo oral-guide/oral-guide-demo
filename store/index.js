@@ -12,58 +12,7 @@ const store = new Vuex.Store({
             isOwner: false,
         },
         rooms: [
-            // 以下内容已在server里面写死，直接就会获取到
-            // {
-            //     roomId: 0,
-            //     name: "大佬房",
-            //     pswd: "",
-            //     seats: 8,
-            //     users: [
-            //         {
-            //             name: "小明",
-            //             roomId: 0,
-            //             isOwner: true
-            //         },
-            //         {
-            //             name: "银角大王",
-            //             roomId: 0,
-            //             isOwner: false
-            //         },
-            //         {
-            //             name: "山拉拉卡",
-            //             roomId: 0,
-            //             isOwner: false
-            //         },
-            //         {
-            //             name: "雷伊",
-            //             roomId: 0,
-            //             isOwner: false
-            //         },
-            //         {
-            //             name: "鱼雨遇",
-            //             roomId: 0,
-            //             isOwner: false
-            //         },
-            //         {
-            //             name: "跟着党走",
-            //             roomId: 0,
-            //             isOwner: false
-            //         },
-            //         {
-            //             name: "多喝水",
-            //             roomId: 0,
-            //             isOwner: false
-            //         },
-            //         {
-            //             name: "小红",
-            //             roomId: 0,
-            //             isOwner: false
-            //         }
-            //     ],
-            //     msgs: [],
-            //     type: "spy",
-            //     isPlaying: true
-            // }
+            // 测试房间已在server里面写死，直接就会获取到
         ],
     },
     getters: {
@@ -73,11 +22,13 @@ const store = new Vuex.Store({
         game: (state, getters) => {
             return getters.currentRoom ? getters.currentRoom.game : null;
         },
+        gameState: (state, getters) => {
+            return getters.game ? getters.game.state : "";
+        },
         players: (state, getters) => {
             return getters.game ? getters.game.players : [];
         },
         player: (state, getters) => {
-            console.log("players", state.rooms);
             return getters.players.find(player => player.name === state.user.name);
         },
         word: (state, getters) => {
@@ -95,9 +46,10 @@ const store = new Vuex.Store({
         setUserRole(state, role) {
             state.user.isOwner = role;
         },
-        setRooms(state, rooms) {
-            state.rooms = rooms;
-        }
+        setRoomState(state, val) {
+            let room = state.rooms.find(room => room.roomId === state.user.roomId);
+            room.game.state = val;
+        },
     },
     actions: {
     }

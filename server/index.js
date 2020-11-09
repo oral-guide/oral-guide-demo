@@ -84,6 +84,7 @@ let rooms = [{
     type: "spy",
     isPlaying: true,
     game: {
+        state: "preparing", // preparing, recording, playing, discussing, voting, revoting
         players: [{
                 name: "小明",
                 roomId: 0,
@@ -158,8 +159,13 @@ let rooms = [{
             }
         ],
         words: [],
+        activePlayers() {
+            return this.players.filter(player => player.isAlive).length;
+        },
         finishRecord: false,
-        recordsCount: 0
+        recordsCount: 0,
+        voteResult: [],
+        targetPlayer: ""
     }
 }];
 wss.on("connection", ws => {
@@ -188,7 +194,9 @@ let actionMap = {
     leaveRoom,
     // 消息相关
     updateRoom,
-    updateGameInfo
+    updateGameInfo,
+    // 投票相关
+    vote
 }
 
 // 更新相关
@@ -331,19 +339,43 @@ function updateGameInfo(msg) {
         if (msg.data.subKey === "records") {
             // 更新录音状态
             room.game.recordsCount++;
-            let activePlayers = room.game.players.filter(player => player.isAlive);
-            console.log(room.game.recordsCount);
-            console.log(activePlayers.length);
-            if (room.game.recordsCount === activePlayers.length) {
-                // 开启闸门，通知全部录音准备完成！
-                room.game.finishRecord = true;
+
+            if (room.game.recordsCount === room.game.activePlayers()) {
+                // 全部录音准备完成，更改状态，开始播放
+                room.game.state = "playing";
                 room.game.recordsCount = 0;
                 updateRooms(1, room);
             }
-        }
 
+        }
     } else {
+        // 更新game的key
         room.game[msg.key] = msg.data[msg.key];
+    }
+
+}
+
+// 投票相关（初步逻辑：全部投好了再结算
+function vote(msg) {
+    let room = rooms.find(room => room.roomId === msg.roomId);
+    room.game.voteResult.push(msg.data);
+    if (room.game.voteResult.length === room.game.activePlayers()) {
+        // 收集到所有active玩家的投票结果后
+        room.game.targetPlayer = room.game.voteResult.findMostOccurence("target");
+        room.game.voteResult = [];
+        if (room.game.targetPlayer.length === 1) {
+            // 投出一名玩家，该轮结束
+            let player = room.game.players.find(player => player.name === room.game.targetPlayer[0]);
+            // 更新玩家状态
+            player.isAlive = false;
+            // 发起继续游戏的信号
+            room.game.state = "preparing";
+        } else {
+            // 投出两名或以上的玩家，发起重新投票的信号
+            room.game.state = "revoting";
+        }
+        // GO!
+        updateRooms(1, room);
     }
 }
 
@@ -364,20 +396,7 @@ function startSpyGame(room) {
     players.setSpy(); // 设置卧底（4-6一个，7-8两个）
     room.players = players;
     room.words = [];
-    roomBroadcast(room, {
-        type: "update",
-        key: "players",
-        data: {
-            players
-        }
-    });
-    roomBroadcast(room, {
-        type: "update",
-        key: "words",
-        data: {
-            words
-        }
-    });
+    // 开始游戏
     roomBroadcast(room, {
         type: "initializeGame"
     })
@@ -408,6 +427,7 @@ function broadcast(reply) {
 
 
 // helper functions
+// 随机洗牌，打乱玩家顺序用
 Array.prototype.shuffle = function () {
     let arr = this.slice();
     let m = arr.length,
@@ -420,7 +440,28 @@ Array.prototype.shuffle = function () {
     }
     return arr;
 }
-
+// 找到出现最多的元素，投票用
+Array.prototype.findMostOccurence = function (key) {
+    let arr = this;
+    let max = 0;
+    let hash = {};
+    let results = [];
+    arr.forEach(item => {
+        if (key) item = item[key];
+        if (!hash[item]) {
+            hash[item] = 0;
+        }
+        hash[item]++;
+        max = Math.max(hash[item], max);
+    })
+    Object.keys(hash).forEach(key => {
+        if (hash[key] === max) {
+            results.push(key);
+        }
+    })
+    return results;
+}
+// 根据玩家人数随机设定某个玩家为卧底
 Array.prototype.setSpy = function () {
     let arr = this;
     let index = Math.floor(arr.length * Math.random());

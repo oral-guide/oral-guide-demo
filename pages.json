@@ -54,6 +54,7 @@
 			"van-row": "/wxcomponents/vant/row/index",
 			"van-col": "/wxcomponents/vant/col/index",
 			"van-dialog": "/wxcomponents/vant/dialog/index",
+			"van-popup": "/wxcomponents/vant/popup/index",
 			"van-field": "/wxcomponents/vant/field/index",
 			"van-stepper": "/wxcomponents/vant/stepper/index",
 			"van-notice-bar": "/wxcomponents/vant/notice-bar/index",
