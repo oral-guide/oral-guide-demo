@@ -59,7 +59,9 @@
 			"van-stepper": "/wxcomponents/vant/stepper/index",
 			"van-notice-bar": "/wxcomponents/vant/notice-bar/index",
 			"van-icon": "/wxcomponents/vant/icon/index",
-			"van-toast": "/wxcomponents/vant/toast/index"
+			"van-toast": "/wxcomponents/vant/toast/index",
+			"van-radio": "/wxcomponents/vant/radio/index",
+			"van-radio-group": "/wxcomponents/vant/radio-group/index"
 		}
 	},
 	"tabBar": {

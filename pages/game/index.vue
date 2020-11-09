@@ -12,7 +12,6 @@
           kept
         </div>
       </div>
-      <div class="vote" v-show="isVote">123546</div>
       <userCard :users="players"> </userCard>
       <!-- 30s 倒计时 -->
       <van-toast id="timer" />
@@ -21,10 +20,20 @@
         {{ timerCount }}
         <van-button>结束</van-button>
       </van-popup>
+      <van-dialog
+        use-slot
+        title="请投票"
+        theme="round-button"
+        :show="isVote"
+        @confirm="confirmVote"
+      >
+        <van-radio-group :value="target" @change="onVoteChange">
+          <van-radio v-for="p in players" :name="p.name" style="margin: 10px;">{{p.name}}</van-radio>
+        </van-radio-group>
+      </van-dialog>
     </div>
   </div>
 </template>
-   
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
@@ -43,6 +52,8 @@ export default {
       dir: 0, // 方向：0为从头到尾，1为从尾到头
       showRecordingDialog: false, // 录音弹框
       noticeText: "", // 通知栏消息
+      isVote: false, // 投票框的显示与隐藏
+      target: ''  // 投票中选择的用户
     };
   },
   computed: {
@@ -163,7 +174,21 @@ export default {
     // 讨论状态调用的方法
     onDiscussing() {},
     // 投票状态调用的方法
-    onVoting() {},
+    onVoting() {
+      this.isVote = true
+    },
+    // 投票单选框onchange
+    onVoteChange(e) {
+      this.target = e.detail
+    },
+    // 投票完成
+    confirmVote() {
+      console.log(`${this.player.name}选择了${this.target}`)
+      this.$util.vote({
+        from: this.player.name,
+        target: this.target
+      })
+    }
   },
   watch: {
     gameState(n) {
