@@ -16,9 +16,9 @@
       <!-- 30s 倒计时 -->
       <van-toast id="timer" />
       <!-- 录音倒计时 -->
-      <van-popup :show="showRecordingDialog">
-        {{ timerCount }}
-        <van-button>结束</van-button>
+      <van-popup :show="showRecordingDialog" :round="true" :close-on-click-overlay="false">
+        <div class="recordMsg">录音中。。。还剩{{ timerCount }}s</div>
+        <van-button color="#ff6600" block>提前结束</van-button>
       </van-popup>
       <van-dialog
         use-slot
@@ -57,7 +57,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["players", "player", "word", "gameState"]),
+    ...mapGetters(["players", "player", "word", "game", "gameState"]),
   },
   methods: {
     ...mapMutations(["setRoomState"]),
@@ -165,7 +165,13 @@ export default {
       if (this.curIndex === -1 || this.curIndex === this.audioSrcList.length) {
         // 9 这一轮结束，讨论环节开始！
         this.round++;
-
+        Toast.loading({
+          duration: 0,
+          forbidClick: true,
+          message: "加载中...",
+          selector: "#timer"
+        })
+        this.$util.emitRoomState("discussing");
         return;
       }
       audio.src = this.audioSrcList[this.curIndex];
@@ -188,40 +194,47 @@ export default {
         from: this.player.name,
         target: this.target
       })
-    }
+    },
+    // 游戏结束调用的方法
+    onEnding() {},
   },
   watch: {
     gameState(n) {
-      // 分为两种情况
-      // server通知改变，如改变为preparing（下一轮开始），playing（录音结束，开始播放），revoting（重新投票）
-      // client直接改变，同时在server进行更新
-      console.log(n);
+      // 分为三种情况
+      // server通知改变，如改变为preparing（下一轮开始），playing（录音结束，开始播放），discussing，revoting（重新投票）
+      // client直接改变，无需在server进行更新，如preparing倒计时结束直接录音
+      // client发起emitRoomState，通知server我这头搞定了，等server确认所有玩家都搞定，再回到第一种情况
       switch (n) {
         case "preparing":
           // 新一轮开始
           this.onPreparing(3);
+          this.noticeText = this.round ? this.game.voteMsg : "准备环节";
           break;
         case "recording":
           this.onRecording(3);
+          this.noticeText = "全体录音中。。。";
           break;
         case "playing":
           // TODO 全体录音结束
           Toast.clear();
           this.onPlaying();
+          this.noticeText = `当前发言玩家：【${this.players[this.curIndex].name}】`;
           break;
         case "discussing":
+          Toast.clear();
           this.onDiscussing();
+          this.noticeText = "讨论环节";
           break;
         case "voting":
           this.onVoting();
+          this.noticeText = "投票环节";
           break;
         case "revoting":
-          // Toast({
-          //   duration: 2000,
-          //   message: "",
-          //   selector: "#timer",
-          // });
           this.onVoting();
+          break;
+        case "ending":
+          this.onEnding();
+          this.noticeText = this.game.voteMsg;
           break;
       }
     },
@@ -267,5 +280,9 @@ export default {
     padding: 0 20px;
     font-size: 12px;
   }
+}
+.recordMsg {
+  box-sizing: border-box;
+  padding: 20px;
 }
 </style>

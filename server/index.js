@@ -165,8 +165,7 @@ let rooms = [{
         activeSpies() {
             return this.players.filter(player => player.isAlive && player.isSpy).length;
         },
-        finishRecord: false,
-        recordsCount: 0,
+        finishCount: 0,
         voteResult: [],
         voteMsg: "",
         targetPlayer: ""
@@ -318,7 +317,7 @@ function leaveHelper(roomId, user) {
         room.users.splice(room.users.findIndex(u => u.name === user.name), 1);
     }
     // 更新用户的room状态
-    userMap[user.name].user.roomId = roomId;
+    userMap[user.name].user.roomId = 0;
     updateRooms(2);
     console.log(`${user.name}离开了房间“${room.name}”。`);
 }
@@ -342,19 +341,31 @@ function updateGameInfo(msg) {
 
         if (msg.data.subKey === "records") {
             // 更新录音状态
-            room.game.recordsCount++;
-
-            if (room.game.recordsCount === room.game.activePlayers()) {
+            room.game.finishCount++;
+            
+            if (room.game.finishCount === room.game.activePlayers()) {
                 // 全部录音准备完成，更改状态，开始播放
                 room.game.state = "playing";
-                room.game.recordsCount = 0;
+                room.game.finishCount = 0;
                 updateRooms(1, room);
             }
-
+            
         }
     } else {
         // 更新game的key
-        room.game[msg.key] = msg.data[msg.key];
+        if (msg.key === "state") {
+            // 如果是更新state，得收集到所有玩家完成的信号才更改
+            room.game.finishCount++;
+            if (room.game.finishCount === room.game.activePlayers()) {
+                // 全部玩家准备好，可以更改状态了
+                room.game[msg.key] = msg.data[msg.key];
+                room.game.finishCount = 0;
+                updateRooms(1, room);
+            }
+
+        } else {
+            room.game[msg.key] = msg.data[msg.key];
+        }
     }
 
 }
@@ -410,8 +421,8 @@ function startSpyGame(room) {
             }
         })
     players.setSpy(); // 设置卧底（4-6一个，7-8两个）
-    room.players = players;
-    room.words = [];
+    room.game.players = players;
+    room.game.words = [];
     // 开始游戏
     roomBroadcast(room, {
         type: "initializeGame"
