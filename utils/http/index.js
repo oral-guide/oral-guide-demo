@@ -16,7 +16,6 @@ function openWebsocket() {
     });
     // websocket收到消息逻辑处理
     uni.onSocketMessage((res) => {
-        console.log(res.data);
         let reply = JSON.parse(res.data);
         actionMap[reply.type](reply);
     });
@@ -32,7 +31,7 @@ function openWebsocket() {
 
 // 发送websocket消息
 async function sendSocketMsg(msg) {
-    return uni.sendSocketMessage({
+    return await uni.sendSocketMessage({
         data: JSON.stringify(msg)
     })
 }
@@ -49,7 +48,7 @@ async function sendDiscussionMsg(msg) {
     }
     let msgs = store.getters.currentRoom.msgs.concat(msg);
     let roomId = store.getters.currentRoom.roomId;
-    return sendSocketMsg({
+    return await sendSocketMsg({
         type: "updateRoom",
         roomId,
         key: "msgs",
@@ -69,18 +68,19 @@ async function uploadAudio(filePath) {
         },
         name: "myFile",
     };
-    uni.showLoading({
-        title: "录音上传中...",
-    });
     let res = await uni.uploadFile(option);
-    uni.hideLoading();
     return res;
 }
 
 // 更新游戏中玩家信息
 async function updatePlayerInfo(msg) {
+    // msg = {
+    //     subKey: "isAlive", // player对象的key
+    //     playerName: this.player.name, // 指定玩家名字
+    //     data: { isAlive: "xxx" } // 对应key的data
+    // }
     let roomId = store.getters.currentRoom.roomId;
-    return sendSocketMsg({
+    return await sendSocketMsg({
         type: "updateGameInfo",
         key: "players",
         roomId,
@@ -91,8 +91,10 @@ async function updatePlayerInfo(msg) {
 }
 // 更新游戏信息，如game.finishRecord，key即为finishRecord，data即为true或者false
 async function updateGameInfo(key, data) {
+    // key = "finishRecord"; // game对象的key
+    // data = true; // key要改的值
     let roomId = store.getters.currentRoom.roomId;
-    return sendSocketMsg({
+    return await sendSocketMsg({
         type: "updateGameInfo",
         key,
         roomId,
@@ -101,7 +103,20 @@ async function updateGameInfo(key, data) {
         }
     })
 }
-
+async function vote(msg) {
+    // msg = {
+    //     from: "小明", // this.player.name, 投票人
+    //     target: "小红" // 投的人的username
+    // }
+    let roomId = store.getters.currentRoom.roomId;
+    return await sendSocketMsg({
+        type: "vote",
+        roomId,
+        data: {
+            ...msg
+        }
+    })
+}
 
 
 // 测试用的用户名称获取
@@ -119,5 +134,6 @@ export default {
     uploadAudio,
     updatePlayerInfo,
     updateGameInfo,
+    vote,
     getRandomNickname
 }
