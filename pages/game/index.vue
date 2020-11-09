@@ -13,8 +13,10 @@
         </div>
       </div>
       <div class="vote" v-show="isVote">123546</div>
+      <!-- 用户头像 -->
       <UserCard :users="players"> </UserCard>
-      <DisArea></DisArea>
+      <!-- 讨论区 -->
+      <DisArea :player="player" :msgs="this.currentRoom.msgs" :show="discusShow" :round="round"></DisArea>
       <!-- 30s 倒计时 -->
       <van-toast id="timer" />
       <!-- 录音倒计时 -->
@@ -44,6 +46,7 @@ export default {
       dir: 0, // 方向：0为从头到尾，1为从尾到头
       showRecordingDialog: false, // 录音弹框
       noticeText: "", // 通知栏消息
+      discussShow:false,//讨论区
     };
   },
   computed: {
@@ -168,7 +171,9 @@ export default {
       audio.play();
     },
     // 讨论状态调用的方法
-    onDiscussing() {},
+    onDiscussing() {
+      this.discussShow=true
+    },
     // 投票状态调用的方法
     onVoting() {},
     // 游戏结束调用的方法

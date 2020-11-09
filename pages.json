@@ -60,7 +60,7 @@
 			"van-notice-bar": "/wxcomponents/vant/notice-bar/index",
 			"van-icon": "/wxcomponents/vant/icon/index",
 			"van-toast": "/wxcomponents/vant/toast/index",
-			"van-popup": "/wxcomponents/vant/popup/index"
+			"van-count-down":"/wxcomponents/vant/count-down/index"
 		}
 	},
 	"tabBar": {

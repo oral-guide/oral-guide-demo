@@ -1,21 +1,38 @@
 <template>
   <div>
-    <van-popup  class="popup" :show="show" :close="onClose" round position="bottom" custom-style="height: 60%">
+    <van-popup
+      class="popup"
+      :show="show"
+      :close="onClose"
+      round
+      position="bottom"
+      custom-style="height: 60%"
+    >
       <div class="chat-box">
-        <header>讨论环节(第{{round+1}}轮)</header>
-        <div class="msg-box">
-          <div class="msg" v-for="(item,index) in msgs" :key="index" :style="item.from==player?'flex-direction:row-reverse':''">
+        <header>
+          讨论环节(第{{round+1}}轮) 倒计时 {{count}} s 
+          
+        </header>
+        <div class="msg-box" ref="msgbox">
+          <div
+            class="msg"
+            v-for="(item,index) in msgs"
+            :key="index"
+            :style="item.from==player?'flex-direction:row-reverse':''"
+          >
             <div class="user-head">
-              <div class="head"><van-image round width="2.5rem" height="2.5rem" src="/static/userimg.jpg" /></div>
+              <div class="head">
+                <van-image round width="2.5rem" height="2.5rem" src="/static/userimg.jpg" />
+              </div>
             </div>
-            <div class="user-msg" >
-              <div class="username" v-if='item.from!=player'>{{item.from}}</div>
+            <div class="user-msg">
+              <div class="username" v-if="item.from!=player">{{item.from}}</div>
               <span :class="item.from==player?'right':'left'">{{item.content}}</span>
             </div>
           </div>
         </div>
         <div class="input-box">
-          <input type="text" ref="sendMsg" v-model="contentText" @keyup.enter="sendText()" />
+          <input type="text" v-model="contentText" @keyup.enter="sendText()" />
           <div class="btn" :class="{'btn-active':contentText}" @click="sendText()">发送</div>
         </div>
       </div>
@@ -25,43 +42,58 @@
 
 <script>
 export default {
+  props:["msgs","player","show","round"],
   data() {
     return {
-      show: true,
+      show: false,
+      timer: null,
       contentText: null,
-      round:0,
-      player:"小明",
-      msgs:[
-        {from:"小红",
-        content:"我认为...."},
-        {from:"小明",
-        content:"AAAA"},
-        {from:"跟着党走",
-        content:"你才是"},
-        {from:"小明",
-        content:"BBBB"},
-        {from:"小明",
-        content:"CCCCCC"},
-        {from:"跟着党走",
-        content:"233333333ffSSSS"},
-        
+      round: 0,
+      player: null,
+      count: 10,
+      msgs: [
+        // { from: "小红", content: "我认为...." },
+        // { from: "小明", content: "AAAA" },
+        // { from: "跟着党走", content: "你才是" }
       ]
     };
+  },
+  mounted(){
+      this.countdown()
   },
   methods: {
     showPopup() {
       this.show = true;
+      console.log("sss");
       // this.round++
     },
     onClose() {
       this.show = false;
+    },
+    sendText() {
+      let msg = {
+        from: this.player,
+        content: this.contentText
+      };
+
+      this.$state.sendDiscussionMsg(msg)
+      this.contentText = "";
+    },
+    countdown() {
+      this.timer = setInterval(() => {
+        this.count--;
+        if (this.count == 0) {
+          clearInterval(this.timer);
+          this.count = 60;
+          this.onClose();
+        }
+      }, 1000);
     }
   }
 };
 </script>
 
 <style  lang="scss" scoped>
-
 .chat-box {
   margin: 0 auto;
   background: #fafafa;
@@ -104,14 +136,14 @@ export default {
         // border-radius: 50%;
         // background: #f1f1f1;
         display: flex;
-        
+
         // justify-content: center;
         // align-items: center;
         .head {
           width: 1.2rem;
           height: 1.2rem;
         }
-        
+
         // position: absolute;
       }
       .user-msg {
@@ -127,18 +159,16 @@ export default {
           margin-top: 0.2rem;
           font-size: 0.88rem;
         }
-        .username{
+        .username {
           font-size: 0.2rem;
-          
-
         }
         .left {
-          background: gray;
+          background: rgb(145, 143, 143);
           color: white;
           animation: toLeft 0.5s ease both 1;
         }
         .right {
-          float:right;
+          float: right;
           background: #f0b943;
           color: white;
           animation: toright 0.5s ease both 1;
@@ -201,7 +231,7 @@ export default {
       align-items: center;
     }
     .btn-active {
-      background:#f78a42;
+      background: #f78a42;
     }
   }
 }
