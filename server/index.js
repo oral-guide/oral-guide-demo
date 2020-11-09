@@ -165,6 +165,7 @@ let rooms = [{
         finishRecord: false,
         recordsCount: 0,
         voteResult: [],
+        voteMsg: "",
         targetPlayer: ""
     }
 }];
@@ -366,9 +367,11 @@ function vote(msg) {
         if (room.game.targetPlayer.length === 1) {
             // 投出一名玩家，该轮结束
             let player = room.game.players.find(player => player.name === room.game.targetPlayer[0]);
+            // 更新voteMsg
+            room.game.voteMsg = `得票数最高的是【${room.game.targetPlayer}】，身份为${player.isSpy}`;
             // 更新玩家状态
             player.isAlive = false;
-            // 发起继续游戏的信号
+            // 发起继续游戏的信号or发起游戏结束的信号
             room.game.state = "preparing";
         } else {
             // 投出两名或以上的玩家，发起重新投票的信号

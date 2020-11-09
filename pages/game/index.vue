@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <van-notice-bar left-icon="volume-o" text="当前发言的是：玩家1" />
+      <van-notice-bar left-icon="volume-o" :text="noticeText" />
       <div class="desc">
         <div class="img">
           <img src="../../static/library.png" alt="" />
@@ -35,13 +35,14 @@ const audio = uni.createInnerAudioContext();
 export default {
   data() {
     return {
-      timer: null,
-      timerCount: 3,
-      audioSrcList: [],
-      curIndex: 0,
+      timer: null, // 倒计时
+      timerCount: 3, // 倒计时时间
+      audioSrcList: [], // 录音播放列表
+      curIndex: 0, // 录音播放位置，对应玩家位置
       round: 0, // 游戏轮数：大于等于1时就每次调换头尾顺序
       dir: 0, // 方向：0为从头到尾，1为从尾到头
-      showRecordingDialog: false
+      showRecordingDialog: false, // 录音弹框
+      noticeText: "", // 通知栏消息
     };
   },
   computed: {
@@ -50,41 +51,42 @@ export default {
   methods: {
     ...mapMutations(["setRoomState"]),
     // 准备状态调用的方法，展示倒计时等
-    onPreparing() {
+    onPreparing(time) {
       const toast = Toast({
         duration: 0,
-        message: "离录音开始还有3s",
+        message: `离录音开始还有${time}s`,
         selector: "#timer",
       });
+      this.timerCount = time;
       this.timer = setInterval(() => {
         this.timerCount--;
         toast.setData({
-          message: `倒计时${this.timerCount}s`,
+          message: `离录音开始还有${this.timerCount}s`,
         });
         if (this.timerCount === 0) {
           // 到达30s的时候，开始录音
           clearInterval(this.timer);
           Toast.clear();
-          // 重置timerCount，为下一次倒计时做准备
-          this.timerCount = 3;
           // 全体开始录音
           this.setRoomState("recording");
-
-          // TODO 5 借助dialog或popup等组件，弹窗或其它方式提示用户正在录音中，显示倒计时及提前结束按钮（该按钮调用endRecord，并记得清除startRecord里的timer）
         }
       }, 1000);
     },
-    // 开始录音的method，由系统自行调用，并在此设置录音倒计时
+    // 录音状态调用的方法，包括开始录音，展示倒计时，结束自动上传等
+    onRecording(time) {
+      this.startRecord();
+      this.startRecordTimer(time);
+    },
     startRecord() {
       recorderManager.start({
         format: "mp3",
         sampleRate: 44100,
         encodeBitRate: 128000,
       });
-      this.startRecordTimer();
     },
-    startRecordTimer() {
+    startRecordTimer(time) {
       this.showRecordingDialog = true;
+      this.timerCount = time;
       this.timer = setInterval(() => {
         this.timerCount--;
         if (this.timerCount === 0) {
@@ -97,13 +99,12 @@ export default {
     },
     // 结束录音的method：提前结束的按钮调用；或满30s系统自动调用（在onLoad中监听结束上传
     endRecord() {
-      console.log("录音结束！上传中···");
       recorderManager.stop();
     },
     // 上传录音的method，可获取到后端传回的url
     async uploadAudio(filePath) {
       // 等待其他玩家
-      const toast = Toast({
+      Toast({
         duration: 0,
         message: "等待其他玩家录音中...",
         selector: "#timer",
@@ -120,9 +121,9 @@ export default {
         data: { records: this.player.records },
       });
     },
-    // 7 开始逐个播放
-    // TODO 播放到哪个玩家，哪个玩家的头像就变大
-    startPlaying() {
+
+    // 播放录音状态调用的方法，包括初始化播放以及依据顺序自动播放下一个
+    onPlaying() {
       // 取出每名玩家records的最新一条，组成当前的播放列表
       this.audioSrcList = this.players.map(
         (player) => player.records[player.records.length - 1]
@@ -138,12 +139,10 @@ export default {
         // 反过来
         this.curIndex = this.audioSrcList.length - 1;
       }
-      console.log(this.audioSrcList);
       audio.src = this.audioSrcList[this.curIndex];
       audio.play();
-      console.log("录音播放中···");
     },
-    // 8 根据方向，顺或反播放下一个玩家的录音
+    // 根据方向，顺或反播放下一个玩家的录音
     playNext() {
       if (this.dir === 0) {
         // 从头到尾
@@ -161,6 +160,10 @@ export default {
       audio.src = this.audioSrcList[this.curIndex];
       audio.play();
     },
+    // 讨论状态调用的方法
+    onDiscussing() {},
+    // 投票状态调用的方法
+    onVoting() {},
   },
   watch: {
     gameState(n) {
@@ -174,18 +177,26 @@ export default {
           this.onPreparing();
           break;
         case "recording":
-          this.startRecord();
+          this.onRecording();
           break;
         case "playing":
           // TODO 全体录音结束
           Toast.clear();
-          this.startPlaying();
+          this.onPlaying();
           break;
         case "discussing":
+          this.onDiscussing();
           break;
         case "voting":
+          this.onVoting();
           break;
         case "revoting":
+          // Toast({
+          //   duration: 2000,
+          //   message: "",
+          //   selector: "#timer",
+          // });
+          this.onVoting();
           break;
       }
     },
