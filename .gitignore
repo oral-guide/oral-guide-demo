@@ -1,2 +1,4 @@
 /unpackage/
 /server/static/uploads
+/server/node_modules
+/server/package.json
