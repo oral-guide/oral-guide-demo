@@ -2,14 +2,15 @@
   <div>
     <van-popup  class="popup" :show="show" :close="onClose" round position="bottom" custom-style="height: 60%">
       <div class="chat-box">
-        <header>讨论环节</header>
+        <header>讨论环节(第{{round+1}}轮)</header>
         <div class="msg-box">
-          <div class="msg">
+          <div class="msg" v-for="(item,index) in msgs" :key="index" :style="item.from==player?'flex-direction:row-reverse':''">
             <div class="user-head">
-              <div class="head"></div>
+              <div class="head"><van-image round width="2.5rem" height="2.5rem" src="/static/userimg.jpg" /></div>
             </div>
-            <div class="user-msg">
-              <span></span>
+            <div class="user-msg" >
+              <div class="username" v-if='item.from!=player'>{{item.from}}</div>
+              <span :class="item.from==player?'right':'left'">{{item.content}}</span>
             </div>
           </div>
         </div>
@@ -27,12 +28,30 @@ export default {
   data() {
     return {
       show: true,
-      contentText: null
+      contentText: null,
+      round:0,
+      player:"小明",
+      msgs:[
+        {from:"小红",
+        content:"我认为...."},
+        {from:"小明",
+        content:"AAAA"},
+        {from:"跟着党走",
+        content:"你才是"},
+        {from:"小明",
+        content:"BBBB"},
+        {from:"小明",
+        content:"CCCCCC"},
+        {from:"跟着党走",
+        content:"233333333ffSSSS"},
+        
+      ]
     };
   },
   methods: {
     showPopup() {
       this.show = true;
+      // this.round++
     },
     onClose() {
       this.show = false;
@@ -82,15 +101,17 @@ export default {
         width: 20%;
         width: 2.5rem;
         height: 2.5rem;
-        border-radius: 50%;
-        background: #f1f1f1;
+        // border-radius: 50%;
+        // background: #f1f1f1;
         display: flex;
-        justify-content: center;
-        align-items: center;
+        
+        // justify-content: center;
+        // align-items: center;
         .head {
           width: 1.2rem;
           height: 1.2rem;
         }
+        
         // position: absolute;
       }
       .user-msg {
@@ -106,12 +127,19 @@ export default {
           margin-top: 0.2rem;
           font-size: 0.88rem;
         }
+        .username{
+          font-size: 0.2rem;
+          
+
+        }
         .left {
-          background: white;
+          background: gray;
+          color: white;
           animation: toLeft 0.5s ease both 1;
         }
         .right {
-          background: #53a8ff;
+          float:right;
+          background: #f0b943;
           color: white;
           animation: toright 0.5s ease both 1;
         }
