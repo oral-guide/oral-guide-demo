@@ -80,7 +80,11 @@ let rooms = [{
             isOwner: false
         }
     ],
-    msgs: [],
+    msgs: [
+        { from: "小红", content: "我认为...." },
+        { from: "小明", content: "AAAA" },
+        { from: "跟着党走", content: "你才是" }
+    ],
     type: "spy",
     isPlaying: true,
     game: {
