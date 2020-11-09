@@ -162,6 +162,9 @@ let rooms = [{
         activePlayers() {
             return this.players.filter(player => player.isAlive).length;
         },
+        activeSpies() {
+            return this.players.filter(player => player.isAlive && player.isSpy).length;
+        },
         finishRecord: false,
         recordsCount: 0,
         voteResult: [],
@@ -367,14 +370,24 @@ function vote(msg) {
         if (room.game.targetPlayer.length === 1) {
             // 投出一名玩家，该轮结束
             let player = room.game.players.find(player => player.name === room.game.targetPlayer[0]);
-            // 更新voteMsg
-            room.game.voteMsg = `得票数最高的是【${room.game.targetPlayer}】，身份为${player.isSpy}`;
             // 更新玩家状态
             player.isAlive = false;
             // 发起继续游戏的信号or发起游戏结束的信号
-            room.game.state = "preparing";
+            let identity = player.isSpy ? "卧底" : "平民";
+            let winner = player.isSpy ? "平民" : "卧底";
+            let gameEnd = !room.game.activeSpies() || (room.game.activeSpies() * 2) === room.game.activePlayers(); // 卧底没了，或卧底数等于平民数了，游戏结束
+            if (gameEnd) {
+                room.game.voteMsg = `得票数最高的是【${room.game.targetPlayer[0]}】，身份为${identity}，恭喜${winner}获得胜利！`;
+                // 游戏结束
+                room.game.state = "ending";
+            } else {
+                room.game.voteMsg = `得票数最高的是【${room.game.targetPlayer[0]}】，身份为${identity}，游戏继续！`;
+                // 游戏继续
+                room.game.state = "preparing";
+            }
         } else {
             // 投出两名或以上的玩家，发起重新投票的信号
+            room.game.voteMsg = `得票数最高的是【${room.game.targetPlayer.join("，")}】，重新进行投票！`;
             room.game.state = "revoting";
         }
         // GO!

@@ -174,10 +174,10 @@ export default {
       switch (n) {
         case "preparing":
           // 新一轮开始
-          this.onPreparing();
+          this.onPreparing(3);
           break;
         case "recording":
-          this.onRecording();
+          this.onRecording(3);
           break;
         case "playing":
           // TODO 全体录音结束
