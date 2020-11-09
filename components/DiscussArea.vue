@@ -76,7 +76,7 @@ export default {
         content: this.contentText
       };
 
-      this.$state.sendDiscussionMsg(msg)
+      this.$util.sendDiscussionMsg(msg)
       this.contentText = "";
     },
     countdown() {
