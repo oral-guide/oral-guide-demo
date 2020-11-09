@@ -60,12 +60,9 @@
 			"van-notice-bar": "/wxcomponents/vant/notice-bar/index",
 			"van-icon": "/wxcomponents/vant/icon/index",
 			"van-toast": "/wxcomponents/vant/toast/index",
-<<<<<<< HEAD
-			"van-count-down":"/wxcomponents/vant/count-down/index"
-=======
+			"van-count-down":"/wxcomponents/vant/count-down/index",
 			"van-radio": "/wxcomponents/vant/radio/index",
 			"van-radio-group": "/wxcomponents/vant/radio-group/index"
->>>>>>> 78d50b840132d0601fae60093668e46ec88a93f5
 		}
 	},
 	"tabBar": {

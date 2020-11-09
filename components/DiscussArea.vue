@@ -42,20 +42,18 @@
 
 <script>
 export default {
-  props:["msgs","player","show","round"],
+  props:["msgs","player","round"],
   data() {
     return {
-      show: false,
+      show:true,
       timer: null,
       contentText: null,
-      round: 0,
-      player: null,
       count: 10,
-      msgs: [
+      // msgs: [
         // { from: "小红", content: "我认为...." },
         // { from: "小明", content: "AAAA" },
         // { from: "跟着党走", content: "你才是" }
-      ]
+      // ]
     };
   },
   mounted(){
@@ -64,20 +62,21 @@ export default {
   methods: {
     showPopup() {
       this.show = true;
-      console.log("sss");
+      
       // this.round++
     },
     onClose() {
       this.show = false;
+      console.log("close");
     },
     sendText() {
       let msg = {
         from: this.player,
         content: this.contentText
       };
-
       this.$util.sendDiscussionMsg(msg)
       this.contentText = "";
+
     },
     countdown() {
       this.timer = setInterval(() => {

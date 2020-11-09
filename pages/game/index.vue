@@ -16,7 +16,7 @@
       <!-- 用户头像 -->
       <UserCard :users="players"> </UserCard>
       <!-- 讨论区 -->
-      <DisArea :player="player" :msgs="currentRoom.msgs" :show="discussShow" :round="round"></DisArea>
+      <DisArea  ref="discuss" :player="player" :msgs="currentRoom.msgs" :round="round"></DisArea>
       <!-- 30s 倒计时 -->
       <van-toast id="timer" />
       <!-- 录音倒计时 -->
@@ -56,7 +56,6 @@ export default {
       dir: 0, // 方向：0为从头到尾，1为从尾到头
       showRecordingDialog: false, // 录音弹框
       noticeText: "", // 通知栏消息
-      discussShow:false,//讨论区
       isVote: false, // 投票框的显示与隐藏
       target: ''  // 投票中选择的用户
     };
@@ -187,7 +186,8 @@ export default {
     },
     // 讨论状态调用的方法
     onDiscussing() {
-      this.discussShow=true
+      console.log("discuss area popup")
+      this.$refs.discuss.showPopup()
     },
     // 投票状态调用的方法
     onVoting() {
