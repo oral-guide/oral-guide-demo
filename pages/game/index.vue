@@ -4,7 +4,7 @@
       <van-notice-bar left-icon="volume-o" text="当前发言的是：玩家1" />
       <div class="desc">
         <div class="img">
-          <img src="../../static/library.png" alt="" />
+          <img src="/static/library.png" alt="" />
         </div>
         <div class="word">library</div>
         <div class="def">
@@ -13,8 +13,8 @@
         </div>
       </div>
       <div class="vote" v-show="isVote">123546</div>
-      <GameConsole />
-      <UserCard :users="players"></UserCard>
+      <UserCard :users="players"> </UserCard>
+      <DisArea></DisArea>
       <!-- 30s 倒计时 -->
       <van-toast id="timer" />
     </div>
