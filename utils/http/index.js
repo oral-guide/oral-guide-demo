@@ -103,6 +103,7 @@ async function updateGameInfo(key, data) {
         }
     })
 }
+// 收取投票结果
 async function vote(msg) {
     // msg = {
     //     from: "小明", // this.player.name, 投票人
@@ -117,7 +118,18 @@ async function vote(msg) {
         }
     })
 }
-
+// 发起更新房间状态请求，等待所有玩家都完成后才更新状态
+async function emitRoomState(state) {
+    let roomId = store.getters.currentRoom.roomId;
+    return await sendSocketMsg({
+        type: "updateGameInfo",
+        key: "state",
+        roomId,
+        data: {
+            state
+        }
+    })
+}
 
 // 测试用的用户名称获取
 async function getRandomNickname() {
@@ -135,5 +147,6 @@ export default {
     updatePlayerInfo,
     updateGameInfo,
     vote,
+    emitRoomState,
     getRandomNickname
 }
