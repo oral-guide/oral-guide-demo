@@ -63,7 +63,7 @@ async function sendDiscussionMsg(msg) {
 // 上传录音
 async function uploadAudio(filePath) {
     const option = {
-        url: "http://humansean.com:8000/upload/audio",
+        url: "https://humansean.com:8080/upload/audio",
         filePath,
         formData: {
             filePath,
