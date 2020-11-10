@@ -13,26 +13,26 @@
           讨论环节(第{{round+1}}轮) 倒计时 {{count}} s 
           
         </header>
-        <div class="msg-box" ref="msgbox">
+        <div class="msg-box" >
           <div
             class="msg"
             v-for="(item,index) in msgs"
             :key="index"
-            :style="item.from==player?'flex-direction:row-reverse':''"
+            :style="item.from==player.name?'flex-direction:row-reverse':''"
           >
-            <div class="user-head">
+            <div class="user-head" ref="user-msg">
               <div class="head">
                 <van-image round width="2.5rem" height="2.5rem" src="/static/userimg.jpg" />
               </div>
             </div>
             <div class="user-msg">
-              <div class="username" v-if="item.from!=player">{{item.from}}</div>
-              <span :class="item.from==player?'right':'left'">{{item.content}}</span>
+              <div class="username" v-if="item.from!=player.name">{{item.from}}</div>
+              <span :class="item.from==player.name?'right':'left'">{{item.content}}</span>
             </div>
           </div>
         </div>
         <div class="input-box">
-          <input type="text" v-model="contentText" @keyup.enter="sendText()" />
+          <input type="text" v-model="contentText"  />
           <div class="btn" :class="{'btn-active':contentText}" @click="sendText()">发送</div>
         </div>
       </div>
@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import {mapMutations} from "vuex"
 export default {
   props:["player","round","msgs"],
   data() {
@@ -48,7 +49,7 @@ export default {
       show:true,
       timer: null,
       contentText: null,
-      count: 10,
+      count: 30,
       // msgs:store.getters.msgs
       // msgs: [
         // { from: "小红", content: "我认为...." },
@@ -59,29 +60,34 @@ export default {
   },
 
   mounted(){
-     console.log(this.msgs)
+     console.log(this.msgs);
+     console.log(this.$refs)
+     
   },
   methods: {
+    ...mapMutations(['setRoomState']),
     showPopup() {
       console.log("pop up");
       this.show = true;
-      this.countdown()
-       
-      
+      this.countdown();
       // this.round++
     },
     onClose() {
       this.show = false;
       console.log("close");
-      // this.$util.
+      this.setRoomState("voting");
     },
     sendText() {
       let msg = {
-        from: this.player,
+        from: this.player.name,
         content: this.contentText
       };
       this.$util.sendDiscussionMsg(msg)
       this.contentText = "";
+      this.$nextTick(()=>{
+        // this.$refs.msgbox.scrollIntoView({behavior: "smooth"})
+        console.log(this.$refs)
+      });
 
     },
     countdown() {
