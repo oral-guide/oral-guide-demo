@@ -1,47 +1,49 @@
 <template>
   <div>
-    <div>
-      <van-notice-bar left-icon="volume-o" :text="noticeText" />
-      <div class="desc">
-        <div class="img">
-          <img src="../../static/library.png" alt="" />
-        </div>
-        <div class="word">library</div>
-        <div class="def">
-          A room or set of rooms where books and other literary materials are
-          kept
-        </div>
-      </div>
-      <userCard :users="players"> </userCard>
-      <!-- 30s 倒计时 -->
-      <van-toast id="timer" />
-      <!-- 录音倒计时 -->
-      <van-popup :show="showRecordingDialog" :round="true" :close-on-click-overlay="false">
-        <div class="recordMsg">录音中。。。还剩{{ timerCount }}s</div>
-        <van-button color="#ff6600" block>提前结束</van-button>
-      </van-popup>
-      <van-dialog
-        use-slot
-        title="请投票"
-        theme="round-button"
-        :show="isVote"
-        @confirm="confirmVote"
-      >
-        <van-radio-group :value="target" @change="onVoteChange">
-          <van-radio v-for="p in players" :name="p.name" style="margin: 10px;">{{p.name}}</van-radio>
-        </van-radio-group>
-      </van-dialog>
-    </div>
+    <!-- 消息通知栏 -->
+    <van-notice-bar left-icon="volume-o" :text="noticeText" />
+    <!-- 单词内容区 -->
+    <wordStudy :word="word"></wordStudy>
+    <userCard :users="players"></userCard>
+    <!-- 30s 倒计时 -->
+    <van-toast id="timer" />
+    <!-- 录音倒计时 -->
+    <van-popup :show="showRecordingDialog" :round="true" :close-on-click-overlay="false">
+      <div class="recordMsg">录音中。。。还剩{{ timerCount }}s</div>
+      <van-button color="#ff6600" block>提前结束</van-button>
+    </van-popup>
+    <van-dialog
+      use-slot
+      title="请投票"
+      theme="round-button"
+      :show="isVote"
+      @confirm="confirmVote"
+    >
+      <van-checkbox-group :value="target" @change="onVoteChange" :max="1">
+        <van-checkbox
+          v-for="(p, i) in validPlayers"
+          :key="i"
+          :name="p.name"
+          style="margin: 10px;"
+        >
+          {{p.name}}
+        </van-checkbox>
+      </van-checkbox-group>
+    </van-dialog>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
 import Toast from "../../wxcomponents/vant/toast/toast";
+import wordStudy from "../../components/wordStudy";
 const recorderManager = uni.getRecorderManager();
 const audio = uni.createInnerAudioContext();
 
 export default {
+  components: {
+    wordStudy
+  },
   data() {
     return {
       timer: null, // 倒计时
@@ -52,12 +54,15 @@ export default {
       dir: 0, // 方向：0为从头到尾，1为从尾到头
       showRecordingDialog: false, // 录音弹框
       noticeText: "", // 通知栏消息
-      isVote: false, // 投票框的显示与隐藏
+      isVote: true, // 投票框的显示与隐藏
       target: ''  // 投票中选择的用户
     };
   },
   computed: {
     ...mapGetters(["players", "player", "word", "game", "gameState"]),
+    validPlayers () {
+      return this.players.filter(p => p.name !== this.player.name)
+    }
   },
   methods: {
     ...mapMutations(["setRoomState"]),
@@ -253,34 +258,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.desc {
-  padding-top: 15px;
-  height: 240px;
-  text-align: center;
-
-  .img {
-    height: 150px;
-    margin-bottom: 10px;
-
-    img {
-      display: block;
-      margin: 0 auto;
-      width: 150px;
-      height: 150px;
-    }
-  }
-
-  .word {
-    margin-bottom: 5px;
-    font-size: 20px;
-    font-weight: 700;
-  }
-
-  .def {
-    padding: 0 20px;
-    font-size: 12px;
-  }
-}
 .recordMsg {
   box-sizing: border-box;
   padding: 20px;
