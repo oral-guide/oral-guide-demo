@@ -53,6 +53,8 @@ const store = new Vuex.Store({
         setRoomState(state, val) {
             let room = state.rooms.find(room => room.roomId === state.user.roomId);
             room.game.state = val;
+            console.log("roomId: " + state.user.roomId);
+            console.log("val: " + room.game.state);
         },
     },
     actions: {

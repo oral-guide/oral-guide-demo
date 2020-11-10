@@ -7,11 +7,20 @@
     <!-- 用户头像 -->
     <UserCard :users="players"> </UserCard>
     <!-- 讨论区 -->
-    <DisArea  ref="discuss" :player="player" :round="round" :msgs="msgs"></DisArea>
+    <DisArea
+      ref="discuss"
+      :player="player"
+      :round="round"
+      :msgs="msgs"
+    ></DisArea>
     <!-- 30s 倒计时 -->
     <van-toast id="timer" />
     <!-- 录音倒计时 -->
-    <van-popup :show="showRecordingDialog" :round="true" :close-on-click-overlay="false">
+    <van-popup
+      :show="showRecordingDialog"
+      :round="true"
+      :close-on-click-overlay="false"
+    >
       <div class="recordMsg">录音中。。。还剩{{ timerCount }}s</div>
       <van-button color="#ff6600" block @click="endRecord">提前结束</van-button>
     </van-popup>
@@ -28,9 +37,9 @@
           v-for="(p, i) in validPlayers"
           :key="i"
           :name="p.name"
-          style="margin: 10px;"
+          style="margin: 10px"
         >
-          {{p.name}}
+          {{ p.name }}
         </van-checkbox>
       </van-checkbox-group>
     </van-dialog>
@@ -46,7 +55,7 @@ const audio = uni.createInnerAudioContext();
 
 export default {
   components: {
-    wordStudy
+    wordStudy,
   },
   data() {
     return {
@@ -59,15 +68,15 @@ export default {
       showRecordingDialog: false, // 录音弹框
       noticeText: "", // 通知栏消息
       isVote: false, // 投票框的显示与隐藏
-      target: '',  // 投票中选择的用户
-      voteTime: 10  // 投票倒计时
+      target: "", // 投票中选择的用户
+      voteTime: 10, // 投票倒计时
     };
   },
   computed: {
-    ...mapGetters(["players", "player", "word", "game", "gameState","msgs"]),
-    validPlayers () {
-      return this.players.filter(p => p.name !== this.player.name)
-    }
+    ...mapGetters(["players", "player", "word", "game", "gameState", "msgs"]),
+    validPlayers() {
+      return this.players.filter((p) => p.name !== this.player.name);
+    },
   },
   methods: {
     ...mapMutations(["setRoomState"]),
@@ -163,11 +172,11 @@ export default {
       audio.src = this.audioSrcList[this.curIndex];
       audio.play();
       // 改变当前玩家isSpeaking状态为true
-      this.players[this.curIndex].isSpeaking=true
+      this.players[this.curIndex].isSpeaking = true;
     },
     // 根据方向，顺或反播放下一个玩家的录音
     playNext() {
-      this.players[this.curIndex].isSpeaking=false
+      this.players[this.curIndex].isSpeaking = false;
       if (this.dir === 0) {
         // 从头到尾
         this.curIndex++;
@@ -182,8 +191,8 @@ export default {
           duration: 0,
           forbidClick: true,
           message: "加载中...",
-          selector: "#timer"
-        })
+          selector: "#timer",
+        });
         this.$util.emitRoomState("discussing");
         return;
       }
@@ -192,74 +201,82 @@ export default {
     },
     // 讨论状态调用的方法
     onDiscussing() {
-      console.log("discuss area pops up")
-      this.$refs.discuss.showPopup()
+      console.log("discuss area pops up");
+      this.$refs.discuss.showPopup();
     },
     // 投票状态调用的方法
     onVoting() {
-      this.isVote = true
+      this.isVote = true;
       // this.voteTimer()
     },
     // 投票单选框onchange
     onVoteChange(e) {
-      this.target = e.detail
+      this.target = e.detail;
     },
     // 投票倒计时
-    voteTimer () {
+    voteTimer() {
       let timer = setInterval(() => {
-        this.voteTime === 0 ? clearInterval(timer) : console.log(--this.voteTime)
-      },1000)
+        this.voteTime === 0
+          ? clearInterval(timer)
+          : console.log(--this.voteTime);
+      }, 1000);
     },
     // 投票完成
     confirmVote() {
-      console.log(`${this.player.name}选择了${this.target}`)
+      console.log(`${this.player.name}选择了${this.target}`);
       this.$util.vote({
         from: this.player.name,
-        target: this.target
-      })
+        target: this.target,
+      });
     },
     // 游戏结束调用的方法
     onEnding() {},
   },
   watch: {
-    gameState(n) {
-      // 分为三种情况
-      // server通知改变，如改变为preparing（下一轮开始），playing（录音结束，开始播放），discussing，revoting（重新投票）
-      // client直接改变，无需在server进行更新，如preparing倒计时结束直接录音
-      // client发起emitRoomState，通知server我这头搞定了，等server确认所有玩家都搞定，再回到第一种情况
-      switch (n) {
-        case "preparing":
-          // 新一轮开始
-          this.onPreparing(3);
-          this.noticeText = this.round ? this.game.voteMsg : "准备环节";
-          break;
-        case "recording":
-          this.onRecording(3);
-          this.noticeText = "全体录音中。。。";
-          break;
-        case "playing":
-          // TODO 全体录音结束
-          Toast.clear();
-          this.onPlaying();
-          this.noticeText = `当前发言玩家：【${this.players[this.curIndex].name}】`;
-          break;
-        case "discussing":
-          Toast.clear();
-          this.onDiscussing();
-          this.noticeText = "讨论环节";
-          break;
-        case "voting":
-          this.onVoting();
-          this.noticeText = "投票环节";
-          break;
-        case "revoting":
-          this.onVoting();
-          break;
-        case "ending":
-          this.onEnding();
-          this.noticeText = this.game.voteMsg;
-          break;
-      }
+    gameState: {
+      immediate: true,
+      handler(n) {
+        console.log(111);
+        // 分为三种情况
+        // server通知改变，如改变为preparing（下一轮开始），playing（录音结束，开始播放），discussing，revoting（重新投票）
+        // client直接改变，无需在server进行更新，如preparing倒计时结束直接录音
+        // client发起emitRoomState，通知server我这头搞定了，等server确认所有玩家都搞定，再回到第一种情况
+        switch (n) {
+          case "preparing":
+            // 新一轮开始
+            this.onPreparing(3);
+            this.noticeText = this.round ? this.game.voteMsg : "准备环节";
+            break;
+          case "recording":
+            this.onRecording(3);
+            this.noticeText = "全体录音中。。。";
+            break;
+          case "playing":
+            // TODO 全体录音结束
+            Toast.clear();
+            this.onPlaying();
+            this.noticeText = `当前发言玩家：【${
+              this.players[this.curIndex].name
+            }】`;
+            break;
+          case "discussing":
+            Toast.clear();
+            this.onDiscussing();
+            this.noticeText = "讨论环节";
+            break;
+          case "voting":
+            this.onVoting();
+            this.noticeText = "投票环节";
+            break;
+          case "revoting":
+            this.onVoting();
+            break;
+          case "ending":
+            this.onEnding();
+            this.noticeText = this.game.voteMsg;
+            break;
+        }
+      },
     },
   },
   onLoad() {
@@ -273,8 +290,8 @@ export default {
     });
   },
   onShow() {
-    this.$util.emitRoomState("preparing");
-  }
+    this.setRoomState("preparing");
+  },
 };
 </script>
 
