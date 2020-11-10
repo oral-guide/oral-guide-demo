@@ -13,7 +13,7 @@
     <!-- 录音倒计时 -->
     <van-popup :show="showRecordingDialog" :round="true" :close-on-click-overlay="false">
       <div class="recordMsg">录音中。。。还剩{{ timerCount }}s</div>
-      <van-button color="#ff6600" block>提前结束</van-button>
+      <van-button color="#ff6600" block @click="endRecord">提前结束</van-button>
     </van-popup>
     <van-dialog
       use-slot
@@ -110,14 +110,14 @@ export default {
         this.timerCount--;
         if (this.timerCount === 0) {
           // 时间到，强制结束录音并上传
-          clearInterval(this.timer);
-          this.showRecordingDialog = false;
           this.endRecord();
         }
       }, 1000);
     },
     // 结束录音的method：提前结束的按钮调用；或满30s系统自动调用（在onLoad中监听结束上传
     endRecord() {
+      clearInterval(this.timer);
+      this.showRecordingDialog = false;
       recorderManager.stop();
     },
     // 上传录音的method，可获取到后端传回的url
