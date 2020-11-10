@@ -170,7 +170,77 @@ let rooms = [{
                 isSpeaking: false,
             }
         ],
-        words: [],
+        words: [
+            {
+                name: 'library',
+                imgUrl: 'https://5b0988e595225.cdn.sohucs.com/images/20171108/75dc96cbc4264828a2832d6abc0b7456.jpg',
+                definitions: [
+                    `a room or set of rooms where books and other literary materials are kept`,
+                    `a collection of literary materials, films, CDs, children's toys, etc, kept for borrowing or reference`,
+                    `the building or institution that houses such a collection: a public library`,
+                    `a set of books published as a series, often in a similar format`,
+                    `computing a collection of standard programs and subroutines for immediate use, usually stored on disk or some other storage device`,
+                    `a collection of specific items for reference or checking against: a library of genetic material`
+                ],
+                keywords: [
+                    'book collection',
+                    'book room',
+                    'study',
+                    'information center',
+                    'reference center',
+                    'media center'
+                ],
+                sentences: [
+                    {
+                        english: `We've consulted a number of books about the subject in the library.`,
+                        chinese: `我们在图书馆查阅了很多有关这个题目的书籍。`
+                    },
+                    {
+                        english: `The library contains a large number of foreign language reference books.`,
+                        chinese: `图书馆有大量的外文参考书。`
+                    },
+                    {
+                        english: `I believe the book is now out of print, but it can easily be borrowed from libraries.`,
+                        chinese: `我想这本书现在已经停印了，但从图书馆很容易借到。`
+                    },
+                    {
+                        english: `The library attracts thousands of scholars and researchers.`,
+                        chinese: `那个图书馆吸引了成千上万的学者和研究人员。`
+                    }
+                ]
+            },
+            {
+                name: 'bookstore',
+                imgUrl: 'http://pic.bbs.0554cc.cn/forum/201903/05/092211eqy6tuhzwpf06j4n.jpg?imageView2/2/w/750',
+                definitions: [
+                    `a store where books are sold`
+                ],
+                keywords: [
+                    'buy',
+                    'shop',
+                    'seller',
+                    'bookseller'
+                ],
+                sentences: [
+                    {
+                        english: `I spent hours browsing in the bookstore.`,
+                        chinese: `我花了几个小时在书店里浏览图书。`
+                    },
+                    {
+                        english: `I rent a video from a bookstore.`,
+                        chinese: `我的录像机是从书店租来的。`
+                    },
+                    {
+                        english: `At the bookstore I bought a dictionary, a grammar book, and a text book.`,
+                        chinese: `我在书店买了一本词典、一本语法书和一本教科书。`
+                    },
+                    {
+                        english: `I think this is Amazon Bookstore, determination and humanity of the design concept created it successful.`,
+                        chinese: `我认为正是亚马逊书店的这种决心和人性化的设计理念造就了它的成功。`
+                    }
+                ]
+            }
+        ],
         activePlayers() {
             return this.players.filter(player => player.isAlive).length;
         },
