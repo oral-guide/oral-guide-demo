@@ -5,20 +5,9 @@ app.use(express.static("static"));
 const multer = require("multer");
 const path = require("path");
 
-let https = require("https");
-let fs = require("fs");
-const privateKey = fs.readFileSync(path.join(__dirname, './certificate/4394053_www.humansean.com.key'), 'utf8');
-const certificate = fs.readFileSync(path.join(__dirname, './certificate/4394053_www.humansean.com.pem'), 'utf8');
-const credentials = {
-    key: privateKey,
-    cert: certificate
-};
-const httpsServer = https.createServer(credentials, app);
-var SSLPORT = 8080;
-httpsServer.listen(SSLPORT, function () {
-    console.log(`冲啊${SSLPORT}！`);
-});
-
+app.listen(8000, () => {
+    console.log("冲啊8000！");
+})
 
 // 音频上传
 var uploadAudio = multer({
@@ -34,168 +23,166 @@ app.post('/upload/audio', uploadAudio.single("myFile"), function (req, res) {
         status: 200,
         msg: "success",
         data: {
-            'url': 'https://humansean.com:8080/uploads/recordings/' + req.file.filename
+            'url': 'https://localhost:8080/uploads/recordings/' + req.file.filename
         }
     })
 })
 
 // WebSocket
 const wss = new WebSocket.Server({
-    server: httpsServer
+    port: 8080
 });
 
 const userMap = {};
-let rooms = [
-    // {
-    // roomId: 0,
-    // name: "大佬房",
-    // pswd: "",
-    // seats: 8,
-    // users: [{
-    //         name: "小明",
-    //         roomId: 0,
-    //         isOwner: true
-    //     },
-    //     {
-    //         name: "银角大王",
-    //         roomId: 0,
-    //         isOwner: false
-    //     },
-    //     {
-    //         name: "山拉拉卡",
-    //         roomId: 0,
-    //         isOwner: false
-    //     },
-    //     {
-    //         name: "雷伊",
-    //         roomId: 0,
-    //         isOwner: false
-    //     },
-    //     {
-    //         name: "鱼雨遇",
-    //         roomId: 0,
-    //         isOwner: false
-    //     },
-    //     {
-    //         name: "跟着党走",
-    //         roomId: 0,
-    //         isOwner: false
-    //     },
-    //     {
-    //         name: "多喝水",
-    //         roomId: 0,
-    //         isOwner: false
-    //     },
-    //     {
-    //         name: "小红",
-    //         roomId: 0,
-    //         isOwner: false
-    //     }
-    // ],
-    // msgs: [{
-    //         from: "小红",
-    //         content: "我认为...."
-    //     },
-    //     {
-    //         from: "小明",
-    //         content: "AAAA"
-    //     },
-    //     {
-    //         from: "跟着党走",
-    //         content: "你才是"
-    //     }
-    // ],
-    // type: "spy",
-    // isPlaying: true,
-    // game: {
-    //     state: "preparing", // preparing, recording, playing, discussing, voting, revoting
-    //     players: [{
-    //             name: "小明",
-    //             roomId: 0,
-    //             isOwner: true,
-    //             records: [],
-    //             isAlive: true,
-    //             isSpy: true,
-    //             isSpeaking: false,
-    //         },
-    //         {
-    //             name: "银角大王",
-    //             roomId: 0,
-    //             isOwner: false,
-    //             records: [],
-    //             isAlive: true,
-    //             isSpy: false,
-    //             isSpeaking: false,
-    //         },
-    //         {
-    //             name: "山拉拉卡",
-    //             roomId: 0,
-    //             isOwner: false,
-    //             records: [],
-    //             isAlive: true,
-    //             isSpy: false,
-    //             isSpeaking: false,
-    //         },
-    //         {
-    //             name: "雷伊",
-    //             roomId: 0,
-    //             isOwner: false,
-    //             records: [],
-    //             isAlive: true,
-    //             isSpy: true,
-    //             isSpeaking: false,
-    //         },
-    //         {
-    //             name: "鱼雨遇",
-    //             roomId: 0,
-    //             isOwner: false,
-    //             records: [],
-    //             isAlive: true,
-    //             isSpy: false,
-    //             isSpeaking: false,
-    //         },
-    //         {
-    //             name: "跟着党走",
-    //             roomId: 0,
-    //             isOwner: false,
-    //             records: [],
-    //             isAlive: true,
-    //             isSpy: false,
-    //             isSpeaking: false,
-    //         },
-    //         {
-    //             name: "多喝水",
-    //             roomId: 0,
-    //             isOwner: false,
-    //             records: [],
-    //             isAlive: true,
-    //             isSpy: false,
-    //             isSpeaking: false,
-    //         },
-    //         {
-    //             name: "小红",
-    //             roomId: 0,
-    //             isOwner: false,
-    //             records: [],
-    //             isAlive: true,
-    //             isSpy: false,
-    //             isSpeaking: false,
-    //         }
-    //     ],
-    //     words: [],
-    //     activePlayers() {
-    //         return this.players.filter(player => player.isAlive).length;
-    //     },
-    //     activeSpies() {
-    //         return this.players.filter(player => player.isAlive && player.isSpy).length;
-    //     },
-    //     finishCount: 0,
-    //     voteResult: [],
-    //     voteMsg: "",
-    //     targetPlayer: ""
-    // }
-// }
-];
+let rooms = [{
+    roomId: 0,
+    name: "大佬房",
+    pswd: "",
+    seats: 8,
+    users: [{
+            name: "小明",
+            roomId: 0,
+            isOwner: true
+        },
+        {
+            name: "银角大王",
+            roomId: 0,
+            isOwner: false
+        },
+        {
+            name: "山拉拉卡",
+            roomId: 0,
+            isOwner: false
+        },
+        {
+            name: "雷伊",
+            roomId: 0,
+            isOwner: false
+        },
+        {
+            name: "鱼雨遇",
+            roomId: 0,
+            isOwner: false
+        },
+        {
+            name: "跟着党走",
+            roomId: 0,
+            isOwner: false
+        },
+        {
+            name: "多喝水",
+            roomId: 0,
+            isOwner: false
+        },
+        {
+            name: "小红",
+            roomId: 0,
+            isOwner: false
+        }
+    ],
+    msgs: [{
+            from: "小红",
+            content: "我认为...."
+        },
+        {
+            from: "小明",
+            content: "AAAA"
+        },
+        {
+            from: "跟着党走",
+            content: "你才是"
+        }
+    ],
+    type: "spy",
+    isPlaying: true,
+    game: {
+        state: "preparing", // preparing, recording, playing, discussing, voting, revoting
+        players: [{
+                name: "小明",
+                roomId: 0,
+                isOwner: true,
+                records: [],
+                isAlive: true,
+                isSpy: true,
+                isSpeaking: false,
+            },
+            {
+                name: "银角大王",
+                roomId: 0,
+                isOwner: false,
+                records: [],
+                isAlive: true,
+                isSpy: false,
+                isSpeaking: false,
+            },
+            {
+                name: "山拉拉卡",
+                roomId: 0,
+                isOwner: false,
+                records: [],
+                isAlive: true,
+                isSpy: false,
+                isSpeaking: false,
+            },
+            {
+                name: "雷伊",
+                roomId: 0,
+                isOwner: false,
+                records: [],
+                isAlive: true,
+                isSpy: true,
+                isSpeaking: false,
+            },
+            {
+                name: "鱼雨遇",
+                roomId: 0,
+                isOwner: false,
+                records: [],
+                isAlive: true,
+                isSpy: false,
+                isSpeaking: false,
+            },
+            {
+                name: "跟着党走",
+                roomId: 0,
+                isOwner: false,
+                records: [],
+                isAlive: true,
+                isSpy: false,
+                isSpeaking: false,
+            },
+            {
+                name: "多喝水",
+                roomId: 0,
+                isOwner: false,
+                records: [],
+                isAlive: true,
+                isSpy: false,
+                isSpeaking: false,
+            },
+            {
+                name: "小红",
+                roomId: 0,
+                isOwner: false,
+                records: [],
+                isAlive: true,
+                isSpy: false,
+                isSpeaking: false,
+            }
+        ],
+        words: [],
+        activePlayers() {
+            return this.players.filter(player => player.isAlive).length;
+        },
+        activeSpies() {
+            return this.players.filter(player => player.isAlive && player.isSpy).length;
+        },
+        finishCount: 0,
+        voteResult: [],
+        voteMsg: "",
+        targetPlayer: ""
+    }
+}];
 wss.on("connection", ws => {
     ws.on("message", msg => {
         // 消息分发处理中心

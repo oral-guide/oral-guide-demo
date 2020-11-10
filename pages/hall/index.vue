@@ -20,7 +20,7 @@
         </div>
       </template>
       <template v-else>
-        还没有房间哦，快去创建一个吧~
+        <div style="text-align: center">还没有房间哦，快去创建一个吧~</div>
       </template>
     </div>
     <!-- 按键区域 -->

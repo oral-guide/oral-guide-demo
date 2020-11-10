@@ -4,7 +4,7 @@ import actionMap from "./actionMap";
 // 开启websocket
 function openWebsocket() {
     uni.connectSocket({
-        url: 'ws://humansean.com:8080'
+        url: 'wss://humansean.com:8080'
     });
     uni.onSocketOpen((res) => {
         sendSocketMsg({
@@ -21,6 +21,7 @@ function openWebsocket() {
     });
     uni.onSocketError((res) => {
         console.log(res);
+        store.state.ws = JSON.stringify(res);
         console.log("websocket出错了！");
     });
     uni.onSocketClose((res) => {
@@ -133,10 +134,9 @@ async function emitRoomState(state) {
 
 // 测试用的用户名称获取
 async function getRandomNickname() {
-    return "小明";
-    // return (await uni.request({
-    //     url: "http://hn216.api.yesapi.cn/?s=App.Common_Nickname.RandOne&return_data=0&need_lan=中文&app_key=CCBB84F9C20989CC3110C3EC590D4383&sign=7222FC6E5229B2FB193605D40B1EF654"
-    // }))[1].data.data.nickname;
+    return (await uni.request({
+        url: "http://hn216.api.yesapi.cn/?s=App.Common_Nickname.RandOne&return_data=0&need_lan=中文&app_key=CCBB84F9C20989CC3110C3EC590D4383&sign=7222FC6E5229B2FB193605D40B1EF654"
+    }))[1].data.data.nickname;
 }
 
 export default {

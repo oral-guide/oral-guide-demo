@@ -14,6 +14,7 @@ const store = new Vuex.Store({
         rooms: [
             // 测试房间已在server里面写死，直接就会获取到
         ],
+        ws: ""
     },
     getters: {
         currentRoom: state => {
