@@ -34,6 +34,9 @@ const store = new Vuex.Store({
         word: (state, getters) => {
             if (!getters.player || !getters.game.words.length) return null;
             return getters.player.isSpy ? getters.game.words[1] : getters.game.words[0];
+        },
+        msgs:(state,getters)=>{
+            return getters.currentRoom? getters.currentRoom.msgs:null;
         }
     },
     mutations: {

@@ -53,7 +53,7 @@ export default {
     },
     async uploadAudio(filePath) {
       const option = {
-        url: 'http://localhost:8000/upload/audio',
+        url: 'http://humansean.com:8000/upload/audio',
         filePath,
         // header,
         formData: {

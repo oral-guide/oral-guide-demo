@@ -16,7 +16,7 @@
       <!-- 用户头像 -->
       <UserCard :users="players"> </UserCard>
       <!-- 讨论区 -->
-      <DisArea  ref="discuss" :player="player" :msgs="currentRoom.msgs" :round="round"></DisArea>
+      <DisArea  ref="discuss" :player="player" :round="round" :msgs="msgs"></DisArea>
       <!-- 30s 倒计时 -->
       <van-toast id="timer" />
       <!-- 录音倒计时 -->
@@ -61,7 +61,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["players", "player", "word", "game", "gameState"]),
+    ...mapGetters(["players", "player", "word", "game", "gameState","msgs"]),
   },
   methods: {
     ...mapMutations(["setRoomState"]),
@@ -186,7 +186,7 @@ export default {
     },
     // 讨论状态调用的方法
     onDiscussing() {
-      console.log("discuss area popup")
+      console.log("discuss area pops up")
       this.$refs.discuss.showPopup()
     },
     // 投票状态调用的方法

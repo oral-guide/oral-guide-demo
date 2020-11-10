@@ -42,13 +42,14 @@
 
 <script>
 export default {
-  props:["msgs","player","round"],
+  props:["player","round","msgs"],
   data() {
     return {
       show:true,
       timer: null,
       contentText: null,
       count: 10,
+      // msgs:store.getters.msgs
       // msgs: [
         // { from: "小红", content: "我认为...." },
         // { from: "小明", content: "AAAA" },
@@ -56,18 +57,23 @@ export default {
       // ]
     };
   },
+
   mounted(){
-      this.countdown()
+     console.log(this.msgs)
   },
   methods: {
     showPopup() {
+      console.log("pop up");
       this.show = true;
+      this.countdown()
+       
       
       // this.round++
     },
     onClose() {
       this.show = false;
       console.log("close");
+      // this.$util.
     },
     sendText() {
       let msg = {
