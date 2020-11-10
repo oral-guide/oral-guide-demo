@@ -58,7 +58,7 @@ export default {
       dir: 0, // 方向：0为从头到尾，1为从尾到头
       showRecordingDialog: false, // 录音弹框
       noticeText: "", // 通知栏消息
-      isVote: true, // 投票框的显示与隐藏
+      isVote: false, // 投票框的显示与隐藏
       target: '',  // 投票中选择的用户
       voteTime: 10  // 投票倒计时
     };
