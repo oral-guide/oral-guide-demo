@@ -38,6 +38,7 @@ export default {
   position: absolute;
   margin: 3%;
   bottom: 0;
+  height: 52px;
 }
 .container{
   display: flex;

@@ -62,7 +62,7 @@
             class="right move-up"
             :value="form.seats"
             @change="handleInput($event, 'seats')"
-            min="4"
+            min="3"
             max="8"
           />
         </div>
@@ -105,7 +105,7 @@ export default {
         roomId: new Date().getTime(),
         name: "一起愉快练习口语吧~",
         pswd: "",
-        seats: 8,
+        seats: 3,
       },
       // 输入房间密码相关
       targetRoom: null,
@@ -155,7 +155,7 @@ export default {
       this.form = {
         name: "一起愉快练习口语吧~",
         pswd: "",
-        seats: 8,
+        seats: 3,
       };
       this.show = false;
       uni.navigateTo({

@@ -177,8 +177,6 @@ export default {
     // 根据方向，顺或反播放下一个玩家的录音
     playNext() {
       console.log("next");
-      console.log("curRound: ", this.round);
-      console.log("dir: ", this.dir);
       this.players[this.curIndex].isSpeaking = false;
       if (this.dir === 0) {
         // 从头到尾
@@ -200,6 +198,8 @@ export default {
         this.$util.emitRoomState("discussing");
         return;
       }
+      // 改变当前玩家isSpeaking状态为true
+      this.players[this.curIndex].isSpeaking = true;
       this.noticeText = `当前发言玩家：【${this.players[this.curIndex].name}】`;
       audio.src = this.audioSrcList[this.curIndex];
       audio.play();
@@ -249,11 +249,11 @@ export default {
         switch (n) {
           case "preparing":
             // 新一轮开始
-            this.onPreparing(3);
+            this.onPreparing(15);
             this.noticeText = this.round ? this.game.voteMsg : "准备环节";
             break;
           case "recording":
-            this.onRecording(3);
+            this.onRecording(15);
             this.noticeText = "全体录音中。。。";
             break;
           case "playing":

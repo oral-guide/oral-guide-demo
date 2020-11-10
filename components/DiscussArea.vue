@@ -6,35 +6,51 @@
       :close="onClose"
       round
       position="bottom"
-      custom-style="height: 60%"
+      custom-style="height: 100%"
     >
       <div class="chat-box">
-        <header>讨论环节(第{{round+1}}轮) 倒计时 {{count}} s</header>
+        <header>讨论环节(第{{ round }}轮) 倒计时 {{ count }} s</header>
         <div class="msg-box">
-          <scroll-view
+          <div
             scroll-y="true"
-            :scroll-into-view="'#msg'+msg.length-1"
+            :scroll-into-view="'#msg' + msg.length - 1"
             scroll-with-animation="true"
             class="msg"
-            v-for="(item,index) in msgs"
+            v-for="(item, index) in msgs"
             :key="index"
-            :style="item.from==player.name?'flex-direction:row-reverse':''"
-            :id="'msg'+index"
+            :style="
+              item.from == player.name ? 'flex-direction:row-reverse' : ''
+            "
           >
             <div class="user-head">
               <div class="head">
-                <van-image round width="2.5rem" height="2.5rem" src="/static/userimg.jpg" />
+                <van-image
+                  round
+                  width="2.5rem"
+                  height="2.5rem"
+                  src="/static/userimg.jpg"
+                />
               </div>
             </div>
             <div class="user-msg">
-              <div class="username" v-if="item.from!=player.name">{{item.from}}</div>
-              <span :class="item.from==player.name?'right':'left'">{{item.content}}</span>
+              <div class="username" v-if="item.from != player.name">
+                {{ item.from }}
+              </div>
+              <span :class="item.from == player.name ? 'right' : 'left'">{{
+                item.content
+              }}</span>
             </div>
-          </scroll-view>
+          </div>
         </div>
         <div class="input-box">
           <input type="text" v-model="contentText" />
-          <div class="btn" :class="{'btn-active':contentText}" @click="sendText()">发送</div>
+          <div
+            class="btn"
+            :class="{ 'btn-active': contentText }"
+            @click="sendText()"
+          >
+            发送
+          </div>
         </div>
       </div>
     </van-popup>
@@ -50,7 +66,7 @@ export default {
       show: false,
       timer: null,
       contentText: null,
-      count: 30
+      count: 60,
       // msgs:store.getters.msgs
       // msgs: [
       // { from: "小红", content: "我认为...." },
@@ -79,10 +95,12 @@ export default {
     sendText() {
       let msg = {
         from: this.player.name,
-        content: this.contentText
+        content: this.contentText,
       };
-      this.$util.sendDiscussionMsg(msg);
-      this.contentText = "";
+      if (this.contentText) {
+        this.$util.sendDiscussionMsg(msg);
+        this.contentText = "";
+      }
     },
     countdown() {
       this.timer = setInterval(() => {
@@ -93,8 +111,8 @@ export default {
           this.onClose();
         }
       }, 1000);
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -165,7 +183,7 @@ export default {
           font-size: 0.88rem;
         }
         .username {
-          font-size: 0.2rem;
+          font-size: 0.5rem;
         }
         .left {
           background: rgb(145, 143, 143);
