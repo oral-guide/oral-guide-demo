@@ -109,7 +109,7 @@ export default {
     },
     startRecord() {
       recorderManager.start({
-        format: "mp3",
+        format: "aac",
         sampleRate: 44100,
         encodeBitRate: 128000,
       });
@@ -176,6 +176,9 @@ export default {
     },
     // 根据方向，顺或反播放下一个玩家的录音
     playNext() {
+      console.log("next");
+      console.log("curRound: ", this.round);
+      console.log("dir: ", this.dir);
       this.players[this.curIndex].isSpeaking = false;
       if (this.dir === 0) {
         // 从头到尾
@@ -184,6 +187,7 @@ export default {
         // 反过来
         this.curIndex--;
       }
+      console.log("index: ", this.curIndex);
       if (this.curIndex === -1 || this.curIndex === this.audioSrcList.length) {
         // 9 这一轮结束，讨论环节开始！
         this.round++;
@@ -196,6 +200,7 @@ export default {
         this.$util.emitRoomState("discussing");
         return;
       }
+      this.noticeText = `当前发言玩家：【${this.players[this.curIndex].name}】`;
       audio.src = this.audioSrcList[this.curIndex];
       audio.play();
     },
@@ -288,6 +293,9 @@ export default {
     audio.onEnded((res) => {
       this.playNext();
     });
+    audio.onError(err => {
+      console.log(err);
+    })
   },
   onShow() {
     this.setRoomState("preparing");
