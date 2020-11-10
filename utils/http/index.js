@@ -4,7 +4,7 @@ import actionMap from "./actionMap";
 // 开启websocket
 function openWebsocket() {
     uni.connectSocket({
-        url: 'ws://localhost:8080'
+        url: 'ws://humansean.com:8080'
     });
     uni.onSocketOpen((res) => {
         sendSocketMsg({
@@ -61,7 +61,7 @@ async function sendDiscussionMsg(msg) {
 // 上传录音
 async function uploadAudio(filePath) {
     const option = {
-        url: "http://localhost:8000/upload/audio",
+        url: "http://humansean.com:8000/upload/audio",
         filePath,
         formData: {
             filePath,

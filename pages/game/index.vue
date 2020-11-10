@@ -4,7 +4,10 @@
     <van-notice-bar left-icon="volume-o" :text="noticeText" />
     <!-- 单词内容区 -->
     <wordStudy :word="word"></wordStudy>
-    <userCard :users="players"></userCard>
+    <!-- 用户头像 -->
+    <UserCard :users="players"> </UserCard>
+    <!-- 讨论区 -->
+    <DisArea  ref="discuss" :player="player" :round="round" :msgs="msgs"></DisArea>
     <!-- 30s 倒计时 -->
     <van-toast id="timer" />
     <!-- 录音倒计时 -->
@@ -59,7 +62,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["players", "player", "word", "game", "gameState"]),
+    ...mapGetters(["players", "player", "word", "game", "gameState","msgs"]),
     validPlayers () {
       return this.players.filter(p => p.name !== this.player.name)
     }
@@ -157,9 +160,12 @@ export default {
       }
       audio.src = this.audioSrcList[this.curIndex];
       audio.play();
+      // 改变当前玩家isSpeaking状态为true
+      this.players[this.curIndex].isSpeaking=true
     },
     // 根据方向，顺或反播放下一个玩家的录音
     playNext() {
+      this.players[this.curIndex].isSpeaking=false
       if (this.dir === 0) {
         // 从头到尾
         this.curIndex++;
@@ -183,7 +189,10 @@ export default {
       audio.play();
     },
     // 讨论状态调用的方法
-    onDiscussing() {},
+    onDiscussing() {
+      console.log("discuss area pops up")
+      this.$refs.discuss.showPopup()
+    },
     // 投票状态调用的方法
     onVoting() {
       this.isVote = true
