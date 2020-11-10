@@ -279,7 +279,8 @@ function createRoom(msg) {
         users: [],
         msgs: [],
         type,
-        isPlaying: false
+        isPlaying: false,
+        game: null
     }
     rooms.push(room);
     updateRooms(2);
@@ -446,6 +447,11 @@ function startSpyGame(room) {
             }
         })
     players.setSpy(); // 设置卧底（4-6一个，7-8两个）
+    room.game = {
+        state: "preparing",
+        players,
+        words
+    }
     room.game.players = players;
     room.game.words = [];
     // 开始游戏
