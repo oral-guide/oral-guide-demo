@@ -45,7 +45,7 @@ export default {
   props:["player","round","msgs"],
   data() {
     return {
-      show:true,
+      show: false,
       timer: null,
       contentText: null,
       count: 10,

@@ -1,9 +1,7 @@
 <template>
   <div>
     <!-- 在这里引入组件 -->
-    <van-button @tap="startRecord">开始录音</van-button>
-    <van-button @tap="endRecord">结束录音</van-button>
-    <van-button @tap="playRecord">播放录音</van-button>
+    {{ ws }}
     <div class="game" v-for="game in games" :key="game.name" @click="navigate">
       {{ game.name }}
     </div>
@@ -11,7 +9,7 @@
 </template>
 
 <script>
-// import { mapState } from "vuex";
+import { mapState } from "vuex";
 const recorderManager = uni.getRecorderManager();
 const audio = uni.createInnerAudioContext();
 export default {
@@ -25,11 +23,8 @@ export default {
       ],
     };
   },
-  onLoad() {
-    recorderManager.onStop((res) => {
-      console.log("recorder stop" + JSON.stringify(res));
-      this.uploadAudio(res.tempFilePath)
-    });
+  computed: {
+    ...mapState(["ws"])
   },
   methods: {
     navigate() {
@@ -38,36 +33,13 @@ export default {
         success: (res) => console.log(res),
         fail: (res) => console.log(res),
       });
-    },
-    startRecord() {
-      console.log("开始录音");
-      recorderManager.start({
-        format: "mp3",
-        sampleRate: 44100,
-        encodeBitRate: 128000,
-      });
-    },
-    endRecord() {
-      console.log("录音结束");
-      recorderManager.stop();
-    },
-    async uploadAudio(filePath) {
-      const option = {
-        url: 'http://humansean.com:8000/upload/audio',
-        filePath,
-        // header,
-        formData: {
-          filePath
-        },
-        name: 'myFile',
-      }
-      uni.showLoading({
-        title: '录音上传中...'
-      })
-      let res = await uni.uploadFile(option);
-      console.log(JSON.parse(res[1].data).data.url);
-      uni.hideLoading()
     }
+  },
+  onLoad() {
+    recorderManager.onStop((res) => {
+      console.log("recorder stop" + JSON.stringify(res));
+      this.uploadAudio(res.tempFilePath)
+    });
   },
 };
 </script>
