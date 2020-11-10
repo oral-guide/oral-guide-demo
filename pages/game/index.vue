@@ -272,6 +272,9 @@ export default {
       this.playNext();
     });
   },
+  onShow() {
+    this.$util.emitRoomState("preparing");
+  }
 };
 </script>
 

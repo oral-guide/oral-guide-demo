@@ -153,7 +153,7 @@ export default {
         },
       });
       this.form = {
-        name: "快来一起愉快练习口语吧~",
+        name: "一起愉快练习口语吧~",
         pswd: "",
         seats: 8,
       };
