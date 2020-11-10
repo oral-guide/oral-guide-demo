@@ -22,6 +22,7 @@
       :show="isVote"
       @confirm="confirmVote"
     >
+      <!-- <h3>{{ voteTime }}s</h3> -->
       <van-checkbox-group :value="target" @change="onVoteChange" :max="1">
         <van-checkbox
           v-for="(p, i) in validPlayers"
@@ -57,8 +58,9 @@ export default {
       dir: 0, // 方向：0为从头到尾，1为从尾到头
       showRecordingDialog: false, // 录音弹框
       noticeText: "", // 通知栏消息
-      isVote: true, // 投票框的显示与隐藏
-      target: ''  // 投票中选择的用户
+      isVote: false, // 投票框的显示与隐藏
+      target: '',  // 投票中选择的用户
+      voteTime: 10  // 投票倒计时
     };
   },
   computed: {
@@ -196,10 +198,17 @@ export default {
     // 投票状态调用的方法
     onVoting() {
       this.isVote = true
+      // this.voteTimer()
     },
     // 投票单选框onchange
     onVoteChange(e) {
       this.target = e.detail
+    },
+    // 投票倒计时
+    voteTimer () {
+      let timer = setInterval(() => {
+        this.voteTime === 0 ? clearInterval(timer) : console.log(--this.voteTime)
+      },1000)
     },
     // 投票完成
     confirmVote() {
