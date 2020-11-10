@@ -9,16 +9,17 @@
       custom-style="height: 60%"
     >
       <div class="chat-box">
-        <header>
-          讨论环节(第{{round+1}}轮) 倒计时 {{count}} s 
-          
-        </header>
-        <div class="msg-box" ref="msgbox">
-          <div
+        <header>讨论环节(第{{round+1}}轮) 倒计时 {{count}} s</header>
+        <div class="msg-box">
+          <scroll-view
+            scroll-y="true"
+            :scroll-into-view="'#msg'+msg.length-1"
+            scroll-with-animation="true"
             class="msg"
             v-for="(item,index) in msgs"
             :key="index"
-            :style="item.from==player?'flex-direction:row-reverse':''"
+            :style="item.from==player.name?'flex-direction:row-reverse':''"
+            :id="'msg'+index"
           >
             <div class="user-head">
               <div class="head">
@@ -26,13 +27,13 @@
               </div>
             </div>
             <div class="user-msg">
-              <div class="username" v-if="item.from!=player">{{item.from}}</div>
-              <span :class="item.from==player?'right':'left'">{{item.content}}</span>
+              <div class="username" v-if="item.from!=player.name">{{item.from}}</div>
+              <span :class="item.from==player.name?'right':'left'">{{item.content}}</span>
             </div>
-          </div>
+          </scroll-view>
         </div>
         <div class="input-box">
-          <input type="text" v-model="contentText" @keyup.enter="sendText()" />
+          <input type="text" v-model="contentText" />
           <div class="btn" :class="{'btn-active':contentText}" @click="sendText()">发送</div>
         </div>
       </div>
@@ -41,48 +42,47 @@
 </template>
 
 <script>
+import { mapMutations } from "vuex";
 export default {
-  props:["player","round","msgs"],
+  props: ["player", "round", "msgs"],
   data() {
     return {
       show: false,
       timer: null,
       contentText: null,
-      count: 10,
+      count: 30
       // msgs:store.getters.msgs
       // msgs: [
-        // { from: "小红", content: "我认为...." },
-        // { from: "小明", content: "AAAA" },
-        // { from: "跟着党走", content: "你才是" }
+      // { from: "小红", content: "我认为...." },
+      // { from: "小明", content: "AAAA" },
+      // { from: "跟着党走", content: "你才是" }
       // ]
     };
   },
 
-  mounted(){
-     console.log(this.msgs)
+  mounted() {
+    console.log(this.msgs);
   },
   methods: {
+    ...mapMutations(["setRoomState"]),
     showPopup() {
       console.log("pop up");
       this.show = true;
-      this.countdown()
-       
-      
+      this.countdown();
       // this.round++
     },
     onClose() {
       this.show = false;
       console.log("close");
-      // this.$util.
+      this.setRoomState("voting");
     },
     sendText() {
       let msg = {
-        from: this.player,
+        from: this.player.name,
         content: this.contentText
       };
-      this.$util.sendDiscussionMsg(msg)
+      this.$util.sendDiscussionMsg(msg);
       this.contentText = "";
-
     },
     countdown() {
       this.timer = setInterval(() => {

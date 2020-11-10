@@ -62,7 +62,9 @@
 			"van-toast": "/wxcomponents/vant/toast/index",
 			"van-count-down":"/wxcomponents/vant/count-down/index",
 			"van-radio": "/wxcomponents/vant/radio/index",
-			"van-radio-group": "/wxcomponents/vant/radio-group/index"
+			"van-radio-group": "/wxcomponents/vant/radio-group/index",
+			"van-checkbox": "/wxcomponents/vant/checkbox/index",
+ 	 		"van-checkbox-group": "/wxcomponents/vant/checkbox-group/index"
 		}
 	},
 	"tabBar": {
