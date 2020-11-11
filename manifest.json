@@ -1,4 +1,6 @@
 {
+	
+	
     "name" : "hx-test",
     "appid" : "",
     "description" : "",
@@ -57,7 +59,7 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "wx145e988f6a2af698",
+        "appid" : "wx42197d9c4b2b446d",
         "setting" : {
             "urlCheck" : false
         },
